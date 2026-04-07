@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, LogOut, Globe, Share2 } from "lucide-react";
 import WebsiteForm from "@/components/admin/WebsiteForm";
@@ -15,24 +14,23 @@ type Website = Tables<"websites">;
 type SocialMedia = Tables<"social_media">;
 
 const AdminDashboard = () => {
-  const { session, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [authorized, setAuthorized] = useState(false);
 
   const [websiteFormOpen, setWebsiteFormOpen] = useState(false);
   const [editingWebsite, setEditingWebsite] = useState<Website | null>(null);
   const [socialFormOpen, setSocialFormOpen] = useState(false);
   const [editingSocial, setEditingSocial] = useState<SocialMedia | null>(null);
 
-  // Redirect if not authenticated
-  if (!authLoading && !session) {
-    navigate("/admin");
-    return null;
-  }
-
-  if (authLoading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
-  }
+  useEffect(() => {
+    const token = sessionStorage.getItem("admin_token");
+    if (!token) {
+      navigate("/admin");
+    } else {
+      setAuthorized(true);
+    }
+  }, [navigate]);
 
   const { data: websites = [] } = useQuery({
     queryKey: ["websites"],
@@ -41,6 +39,7 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data;
     },
+    enabled: authorized,
   });
 
   const { data: socials = [] } = useQuery({
@@ -50,6 +49,7 @@ const AdminDashboard = () => {
       if (error) throw error;
       return data;
     },
+    enabled: authorized,
   });
 
   const websiteMutation = useMutation({
@@ -112,10 +112,14 @@ const AdminDashboard = () => {
     },
   });
 
-  const handleLogout = async () => {
-    await signOut();
+  const handleLogout = () => {
+    sessionStorage.removeItem("admin_token");
     navigate("/admin");
   };
+
+  if (!authorized) {
+    return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -123,7 +127,7 @@ const AdminDashboard = () => {
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-xl font-serif text-gradient-gold">Admin Dashboard</h1>
           <Button variant="ghost" onClick={handleLogout} className="text-muted-foreground">
-            <LogOut className="w-4 h-4 mr-2" /> Logout
+            <LogOut className="w-4 h-4 mr-2" /> Exit
           </Button>
         </div>
       </header>
@@ -165,7 +169,7 @@ const AdminDashboard = () => {
                     </div>
                     <p className="text-sm text-muted-foreground hidden sm:block">{site.owner_name}</p>
                     <div className="flex gap-2">
-                      <Button size="icon" variant="ghost" onClick={() => { setEditingWebsite(site); setWebsiteFormOpen(true); }}>
+                      <Button size="icon" variant="ghost" onClick={() => { setEditingWebsite(site); setSocialFormOpen(false); setWebsiteFormOpen(true); }}>
                         <Pencil className="w-4 h-4" />
                       </Button>
                       <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteWebsite.mutate(site.id)}>
@@ -215,7 +219,7 @@ const AdminDashboard = () => {
                     </div>
                     <p className="text-sm text-muted-foreground hidden sm:block">{social.owner_name}</p>
                     <div className="flex gap-2">
-                      <Button size="icon" variant="ghost" onClick={() => { setEditingSocial(social); setSocialFormOpen(true); }}>
+                      <Button size="icon" variant="ghost" onClick={() => { setEditingSocial(social); setWebsiteFormOpen(false); setSocialFormOpen(true); }}>
                         <Pencil className="w-4 h-4" />
                       </Button>
                       <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteSocial.mutate(social.id)}>
