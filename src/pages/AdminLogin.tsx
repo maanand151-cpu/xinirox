@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { Shield } from "lucide-react";
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -17,16 +16,20 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    try {
+      const { data, error } = await supabase.functions.invoke("verify-admin-password", {
+        body: { password },
+      });
 
-    if (error) {
-      toast.error("Invalid credentials");
-    } else {
-      toast.success("Welcome back!");
-      navigate("/admin/dashboard");
+      if (error || !data?.success) {
+        toast.error("Invalid password");
+      } else {
+        sessionStorage.setItem("admin_token", data.token);
+        toast.success("Welcome back!");
+        navigate("/admin/dashboard");
+      }
+    } catch {
+      toast.error("Something went wrong");
     }
     setLoading(false);
   };
@@ -38,24 +41,14 @@ const AdminLogin = () => {
           <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
             <Shield className="w-7 h-7 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-serif text-gradient-gold">Admin Login</CardTitle>
+          <CardTitle className="text-2xl font-serif text-gradient-gold">Admin Access</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-secondary border-border"
-              />
-            </div>
-            <div>
-              <Input
                 type="password"
-                placeholder="Password"
+                placeholder="Enter admin password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -63,7 +56,7 @@ const AdminLogin = () => {
               />
             </div>
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Verifying..." : "Access Dashboard"}
             </Button>
           </form>
         </CardContent>
