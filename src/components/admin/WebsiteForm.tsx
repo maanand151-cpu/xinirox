@@ -1,0 +1,77 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Website = Tables<"websites">;
+
+interface WebsiteFormProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: { name: string; url: string; owner_name: string; icon_url: string }) => void;
+  initial?: Website | null;
+  loading?: boolean;
+}
+
+const WebsiteForm = ({ open, onClose, onSubmit, initial, loading }: WebsiteFormProps) => {
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [iconUrl, setIconUrl] = useState("");
+
+  useEffect(() => {
+    if (initial) {
+      setName(initial.name);
+      setUrl(initial.url);
+      setOwnerName(initial.owner_name);
+      setIconUrl(initial.icon_url || "");
+    } else {
+      setName("");
+      setUrl("");
+      setOwnerName("");
+      setIconUrl("");
+    }
+  }, [initial, open]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ name, url, owner_name: ownerName, icon_url: iconUrl });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="bg-card border-border">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-gradient-gold">
+            {initial ? "Edit Website" : "Add Website"}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label>Icon URL</Label>
+            <Input value={iconUrl} onChange={(e) => setIconUrl(e.target.value)} placeholder="https://example.com/icon.png" className="bg-secondary border-border" />
+          </div>
+          <div>
+            <Label>Website Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} required className="bg-secondary border-border" />
+          </div>
+          <div>
+            <Label>Website URL</Label>
+            <Input value={url} onChange={(e) => setUrl(e.target.value)} required type="url" className="bg-secondary border-border" />
+          </div>
+          <div>
+            <Label>Owner Name</Label>
+            <Input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} required className="bg-secondary border-border" />
+          </div>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Saving..." : initial ? "Update" : "Add Website"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default WebsiteForm;
