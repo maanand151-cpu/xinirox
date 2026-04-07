@@ -18,13 +18,6 @@ const Navbar = () => {
           <a href="#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             About
           </a>
-          <Link
-            to="/admin"
-            className="text-muted-foreground hover:text-primary transition-colors"
-            title="Admin"
-          >
-            <Shield className="w-5 h-5" />
-          </Link>
         </div>
       </div>
     </nav>
