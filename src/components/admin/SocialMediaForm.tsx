@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import IconUpload from "./IconUpload";
 import type { Tables } from "@/integrations/supabase/types";
 
 type SocialMedia = Tables<"social_media">;
@@ -42,17 +43,14 @@ const SocialMediaForm = ({ open, onClose, onSubmit, initial, loading }: SocialMe
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="bg-card border-border">
+      <DialogContent className="bg-card border-border/50">
         <DialogHeader>
           <DialogTitle className="font-serif text-gradient-gold">
             {initial ? "Edit Social Media" : "Add Social Media"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label>Icon URL</Label>
-            <Input value={iconUrl} onChange={(e) => setIconUrl(e.target.value)} placeholder="https://example.com/icon.png" className="bg-secondary border-border" />
-          </div>
+          <IconUpload value={iconUrl} onChange={setIconUrl} />
           <div>
             <Label>Platform Name</Label>
             <Input value={platformName} onChange={(e) => setPlatformName(e.target.value)} required className="bg-secondary border-border" />

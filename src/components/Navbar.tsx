@@ -2,19 +2,19 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-xl border-b border-border/20">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="text-xl font-serif font-bold text-gradient-gold">
           Xini Rox
         </Link>
-        <div className="flex items-center gap-6">
-          <a href="#websites" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+        <div className="flex items-center gap-8">
+          <a href="#websites" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             Websites
           </a>
-          <a href="#social" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+          <a href="#social" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             Social
           </a>
-          <a href="#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+          <a href="#about" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             About
           </a>
         </div>
