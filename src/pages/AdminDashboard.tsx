@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, LogOut, Globe, Share2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Globe, Share2 } from "lucide-react";
 import WebsiteForm from "@/components/admin/WebsiteForm";
 import SocialMediaForm from "@/components/admin/SocialMediaForm";
 import type { Tables } from "@/integrations/supabase/types";
@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const token = sessionStorage.getItem("admin_token");
     if (!token) {
-      navigate("/admin");
+      navigate("/");
     } else {
       setAuthorized(true);
     }
@@ -112,9 +112,9 @@ const AdminDashboard = () => {
     },
   });
 
-  const handleLogout = () => {
+  const handleExit = () => {
     sessionStorage.removeItem("admin_token");
-    navigate("/admin");
+    navigate("/");
   };
 
   if (!authorized) {
@@ -123,17 +123,17 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-border/20 bg-card/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-xl font-serif text-gradient-gold">Admin Dashboard</h1>
-          <Button variant="ghost" onClick={handleLogout} className="text-muted-foreground">
-            <LogOut className="w-4 h-4 mr-2" /> Exit
+          <Button variant="ghost" onClick={handleExit} className="text-muted-foreground hover:text-foreground">
+            <X className="w-4 h-4 mr-2" /> Exit
           </Button>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-        {/* Websites Section */}
+        {/* Websites */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -141,40 +141,31 @@ const AdminDashboard = () => {
               <h2 className="text-2xl font-serif font-bold text-foreground">Websites</h2>
             </div>
             <Button onClick={() => { setEditingWebsite(null); setWebsiteFormOpen(true); }}>
-              <Plus className="w-4 h-4 mr-2" /> Add Website
+              <Plus className="w-4 h-4 mr-2" /> Add
             </Button>
           </div>
-
           {websites.length === 0 ? (
-            <Card className="bg-card border-border/50">
-              <CardContent className="p-8 text-center text-muted-foreground">
-                No websites yet. Click "Add Website" to get started.
-              </CardContent>
+            <Card className="bg-card border-border/30">
+              <CardContent className="p-8 text-center text-muted-foreground">No websites yet.</CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {websites.map((site) => (
-                <Card key={site.id} className="bg-card border-border/50">
+                <Card key={site.id} className="bg-card border-border/30">
                   <CardContent className="p-4 flex items-center gap-4">
                     {site.icon_url ? (
-                      <img src={site.icon_url} alt={site.name} className="w-10 h-10 rounded-lg object-cover border border-border" />
+                      <img src={site.icon_url} alt={site.name} className="w-10 h-10 rounded-lg object-cover border border-border/30" />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-primary" />
-                      </div>
+                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center"><Globe className="w-5 h-5 text-primary/60" /></div>
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-foreground">{site.name}</p>
                       <p className="text-sm text-muted-foreground truncate">{site.url}</p>
                     </div>
                     <p className="text-sm text-muted-foreground hidden sm:block">{site.owner_name}</p>
-                    <div className="flex gap-2">
-                      <Button size="icon" variant="ghost" onClick={() => { setEditingWebsite(site); setSocialFormOpen(false); setWebsiteFormOpen(true); }}>
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteWebsite.mutate(site.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div className="flex gap-1">
+                      <Button size="icon" variant="ghost" onClick={() => { setEditingWebsite(site); setWebsiteFormOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteWebsite.mutate(site.id)}><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -183,7 +174,7 @@ const AdminDashboard = () => {
           )}
         </section>
 
-        {/* Social Media Section */}
+        {/* Social Media */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -191,40 +182,31 @@ const AdminDashboard = () => {
               <h2 className="text-2xl font-serif font-bold text-foreground">Social Media</h2>
             </div>
             <Button onClick={() => { setEditingSocial(null); setSocialFormOpen(true); }}>
-              <Plus className="w-4 h-4 mr-2" /> Add Social Media
+              <Plus className="w-4 h-4 mr-2" /> Add
             </Button>
           </div>
-
           {socials.length === 0 ? (
-            <Card className="bg-card border-border/50">
-              <CardContent className="p-8 text-center text-muted-foreground">
-                No social media yet. Click "Add Social Media" to get started.
-              </CardContent>
+            <Card className="bg-card border-border/30">
+              <CardContent className="p-8 text-center text-muted-foreground">No social media yet.</CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {socials.map((social) => (
-                <Card key={social.id} className="bg-card border-border/50">
+                <Card key={social.id} className="bg-card border-border/30">
                   <CardContent className="p-4 flex items-center gap-4">
                     {social.icon_url ? (
-                      <img src={social.icon_url} alt={social.platform_name} className="w-10 h-10 rounded-lg object-cover border border-border" />
+                      <img src={social.icon_url} alt={social.platform_name} className="w-10 h-10 rounded-lg object-cover border border-border/30" />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                        <Share2 className="w-5 h-5 text-primary" />
-                      </div>
+                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center"><Share2 className="w-5 h-5 text-primary/60" /></div>
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-foreground">{social.platform_name}</p>
                       <p className="text-sm text-muted-foreground truncate">{social.profile_url}</p>
                     </div>
                     <p className="text-sm text-muted-foreground hidden sm:block">{social.owner_name}</p>
-                    <div className="flex gap-2">
-                      <Button size="icon" variant="ghost" onClick={() => { setEditingSocial(social); setWebsiteFormOpen(false); setSocialFormOpen(true); }}>
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteSocial.mutate(social.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div className="flex gap-1">
+                      <Button size="icon" variant="ghost" onClick={() => { setEditingSocial(social); setSocialFormOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteSocial.mutate(social.id)}><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -234,21 +216,8 @@ const AdminDashboard = () => {
         </section>
       </main>
 
-      <WebsiteForm
-        open={websiteFormOpen}
-        onClose={() => { setWebsiteFormOpen(false); setEditingWebsite(null); }}
-        onSubmit={(data) => websiteMutation.mutate({ ...data, id: editingWebsite?.id })}
-        initial={editingWebsite}
-        loading={websiteMutation.isPending}
-      />
-
-      <SocialMediaForm
-        open={socialFormOpen}
-        onClose={() => { setSocialFormOpen(false); setEditingSocial(null); }}
-        onSubmit={(data) => socialMutation.mutate({ ...data, id: editingSocial?.id })}
-        initial={editingSocial}
-        loading={socialMutation.isPending}
-      />
+      <WebsiteForm open={websiteFormOpen} onClose={() => { setWebsiteFormOpen(false); setEditingWebsite(null); }} onSubmit={(data) => websiteMutation.mutate({ ...data, id: editingWebsite?.id })} initial={editingWebsite} loading={websiteMutation.isPending} />
+      <SocialMediaForm open={socialFormOpen} onClose={() => { setSocialFormOpen(false); setEditingSocial(null); }} onSubmit={(data) => socialMutation.mutate({ ...data, id: editingSocial?.id })} initial={editingSocial} loading={socialMutation.isPending} />
     </div>
   );
 };
