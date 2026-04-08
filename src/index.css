@@ -117,4 +117,13 @@
   .bg-noise {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
+
+  @keyframes install-glow {
+    0%, 100% { box-shadow: 0 0 20px hsl(260 80% 55% / 0.4), 0 0 40px hsl(220 90% 55% / 0.2); }
+    50% { box-shadow: 0 0 30px hsl(260 80% 55% / 0.6), 0 0 60px hsl(220 90% 55% / 0.35); }
+  }
+
+  .animate-install-glow {
+    animation: install-glow 2s ease-in-out infinite;
+  }
 }

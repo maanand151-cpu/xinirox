@@ -5,7 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Shield } from "lucide-react";
+import { Shield, Download } from "lucide-react";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const HeroSection = () => {
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { canInstall, isInstalled, promptInstall } = useInstallPrompt();
 
   const handleTitleClick = useCallback(() => {
     const newCount = clickCount + 1;
@@ -60,6 +62,19 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-noise opacity-30" />
 
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
+        {/* Install Button */}
+        {canInstall && !isInstalled && (
+          <div className="mb-6">
+            <button
+              onClick={promptInstall}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white bg-[hsl(260,80%,55%)] shadow-[0_0_20px_hsl(260_80%_55%/0.4),0_0_40px_hsl(220_90%_55%/0.2)] hover:shadow-[0_0_30px_hsl(260_80%_55%/0.6),0_0_60px_hsl(220_90%_55%/0.3)] transition-all duration-300 animate-install-glow"
+            >
+              <Download className="w-4 h-4" />
+              Install Xini Rox App
+            </button>
+          </div>
+        )}
+
         <div className="mb-8 inline-block">
           <span className="text-xs font-medium tracking-[0.4em] uppercase text-primary/70 border border-primary/20 px-4 py-2 rounded-full">
             Business Manager & Entrepreneur
