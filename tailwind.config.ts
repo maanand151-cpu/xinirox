@@ -56,6 +56,10 @@ export default {
           glow: "hsl(var(--gold-glow))",
           dim: "hsl(var(--gold-dim))",
         },
+        silver: {
+          DEFAULT: "hsl(var(--silver))",
+          dim: "hsl(var(--silver-dim))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
