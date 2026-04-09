@@ -33,7 +33,8 @@ const AboutAdmin = () => {
   const updateProfile = useMutation({
     mutationFn: async () => {
       if (!profile) return;
-      const { error } = await supabase.from("about_profile").update(profileForm).eq("id", profile.id);
+      const updateData: Record<string, unknown> = { ...profileForm };
+      const { error } = await supabase.from("about_profile").update(updateData as any).eq("id", profile.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -153,8 +154,8 @@ const AboutAdmin = () => {
                 <img src={getProfileValue("profile_image_url") as string} alt="Profile" className="w-16 h-16 rounded-full object-cover border border-border/30" />
               )}
               <IconUpload
-                onUpload={(url) => setProfileForm((p) => ({ ...p, profile_image_url: url }))}
-                currentUrl={(getProfileValue("profile_image_url") as string) || ""}
+                value={(getProfileValue("profile_image_url") as string) || ""}
+                onChange={(url) => setProfileForm((p) => ({ ...p, profile_image_url: url }))}
               />
             </div>
           </div>
