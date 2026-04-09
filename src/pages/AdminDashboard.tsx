@@ -5,9 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, X, Globe, Share2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Globe, Share2, User } from "lucide-react";
 import WebsiteForm from "@/components/admin/WebsiteForm";
 import SocialMediaForm from "@/components/admin/SocialMediaForm";
+import AboutAdmin from "@/components/admin/AboutAdmin";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Website = Tables<"websites">;
@@ -213,6 +214,11 @@ const AdminDashboard = () => {
               ))}
             </div>
           )}
+        </section>
+
+        {/* About Us */}
+        <section>
+          <AboutAdmin />
         </section>
       </main>
 
