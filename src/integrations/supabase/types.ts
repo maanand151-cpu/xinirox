@@ -14,6 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_achievements: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      about_gallery: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      about_profile: {
+        Row: {
+          address: string | null
+          contact_number: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_verified: boolean
+          profile_image_url: string | null
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          contact_number?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_verified?: boolean
+          profile_image_url?: string | null
+          tagline?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          contact_number?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_verified?: boolean
+          profile_image_url?: string | null
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       social_media: {
         Row: {
           created_at: string
