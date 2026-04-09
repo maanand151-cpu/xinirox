@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+
 const AboutSection = () => {
   return (
     <section id="about" className="py-24 px-4 relative">
@@ -12,11 +15,16 @@ const AboutSection = () => {
           across diverse industries. With a keen eye for opportunity and a commitment to excellence, Xini manages
           multiple businesses, brands, and digital platforms.
         </p>
-        <p className="text-lg text-muted-foreground leading-relaxed font-light">
+        <p className="text-lg text-muted-foreground leading-relaxed font-light mb-8">
           This hub serves as the central point of connection — bringing together all websites, social media
-          profiles, and ventures under one roof. Whether you're a potential partner, client, or collaborator,
-          everything you need is right here.
+          profiles, and ventures under one roof.
         </p>
+        <Link
+          to="/about"
+          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium"
+        >
+          Learn More About Us <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </section>
   );
