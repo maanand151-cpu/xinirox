@@ -63,7 +63,7 @@ const HeroSection = () => {
 
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
         {/* Install Button */}
-        {canInstall && !isInstalled && (
+        {!isInstalled && (
           <div className="mb-6">
             <button
               onClick={promptInstall}
