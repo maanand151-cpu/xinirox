@@ -8,15 +8,15 @@ const Navbar = () => {
           Xini Rox
         </Link>
         <div className="flex items-center gap-8">
-          <a href="#websites" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
+          <a href="/#websites" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             Websites
           </a>
-          <a href="#social" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
+          <a href="/#social" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             Social
           </a>
-          <a href="#about" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
-            About
-          </a>
+          <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
+            About Us
+          </Link>
         </div>
       </div>
     </nav>
