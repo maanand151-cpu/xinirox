@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://xinirox.lovable.app/sitemap.xml
+Sitemap: https://lswynjfkkutmttcqoaqo.supabase.co/functions/v1/sitemap

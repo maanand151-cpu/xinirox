@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,41 +8,77 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Save, User, Trophy, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, User, Trophy, Image as ImageIcon, Loader2 } from "lucide-react";
 import IconUpload from "@/components/admin/IconUpload";
 
 const AboutAdmin = () => {
   const queryClient = useQueryClient();
 
   // Profile
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["about_profile"],
     queryFn: async () => {
       const { data, error } = await supabase.from("about_profile").select("*").limit(1).single();
+      if (error && error.code === "PGRST116") {
+        // No profile row exists — create one
+        const { data: newData, error: insertErr } = await supabase
+          .from("about_profile")
+          .insert({ full_name: "Xini Rox", tagline: "Business Manager & Digital Entrepreneur" })
+          .select()
+          .single();
+        if (insertErr) throw insertErr;
+        return newData;
+      }
       if (error) throw error;
       return data;
     },
   });
 
   const [profileForm, setProfileForm] = useState<Record<string, string | boolean>>({});
-  const profileDirty = Object.keys(profileForm).length > 0;
 
-  const getProfileValue = (field: string) =>
-    field in profileForm ? profileForm[field] : (profile as any)?.[field] ?? "";
+  // Sync profile data into form when loaded
+  useEffect(() => {
+    if (profile) {
+      setProfileForm({
+        full_name: profile.full_name || "",
+        tagline: profile.tagline || "",
+        contact_number: profile.contact_number || "",
+        email: profile.email || "",
+        address: profile.address || "",
+        profile_image_url: profile.profile_image_url || "",
+        is_verified: profile.is_verified ?? false,
+      });
+    }
+  }, [profile]);
 
   const updateProfile = useMutation({
     mutationFn: async () => {
-      if (!profile) return;
-      const updateData: Record<string, unknown> = { ...profileForm };
-      const { error } = await supabase.from("about_profile").update(updateData as any).eq("id", profile.id);
+      if (!profile) {
+        toast.error("Profile not loaded yet");
+        return;
+      }
+      const { error } = await supabase
+        .from("about_profile")
+        .update({
+          full_name: profileForm.full_name as string,
+          tagline: profileForm.tagline as string,
+          contact_number: profileForm.contact_number as string,
+          email: profileForm.email as string,
+          address: profileForm.address as string,
+          profile_image_url: profileForm.profile_image_url as string,
+          is_verified: profileForm.is_verified as boolean,
+        })
+        .eq("id", profile.id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["about_profile"] });
-      setProfileForm({});
-      toast.success("Profile updated!");
+      toast.success("✅ Profile saved successfully!");
     },
-    onError: () => toast.error("Failed to update profile"),
+    onError: (err) => {
+      console.error("Profile save error:", err);
+      toast.error("Failed to update profile. Please try again.");
+    },
   });
 
   // Achievements
@@ -75,7 +111,7 @@ const AboutAdmin = () => {
       setEditingAch(null);
       toast.success("Achievement saved!");
     },
-    onError: () => toast.error("Failed to save"),
+    onError: () => toast.error("Failed to save achievement"),
   });
 
   const deleteAch = useMutation({
@@ -85,7 +121,7 @@ const AboutAdmin = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["about_achievements"] });
-      toast.success("Deleted");
+      toast.success("Achievement deleted");
     },
   });
 
@@ -112,7 +148,7 @@ const AboutAdmin = () => {
       queryClient.invalidateQueries({ queryKey: ["about_gallery"] });
       setGalleryUrl("");
       setGalleryCaption("");
-      toast.success("Image added!");
+      toast.success("Image added to gallery!");
     },
     onError: () => toast.error("Failed to add image"),
   });
@@ -137,24 +173,46 @@ const AboutAdmin = () => {
     addGalleryImage.mutate(urlData.publicUrl);
   };
 
+  if (profileLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        <span className="ml-2 text-muted-foreground">Loading profile...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-10">
       {/* Profile Section */}
       <section>
-        <div className="flex items-center gap-2 mb-6">
-          <User className="w-5 h-5 text-primary" />
-          <h2 className="text-2xl font-serif font-bold text-foreground">About Profile</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <User className="w-5 h-5 text-primary" />
+            <h2 className="text-2xl font-serif font-bold text-foreground">About Profile</h2>
+          </div>
+          <Button
+            onClick={() => updateProfile.mutate()}
+            disabled={updateProfile.isPending}
+            className="gap-2"
+          >
+            {updateProfile.isPending ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+            ) : (
+              <><Save className="w-4 h-4" /> Save Changes</>
+            )}
+          </Button>
         </div>
 
         <div className="space-y-4">
           <div>
             <Label className="text-muted-foreground text-sm">Profile Image</Label>
             <div className="flex items-center gap-4 mt-1">
-              {getProfileValue("profile_image_url") && (
-                <img src={getProfileValue("profile_image_url") as string} alt="Profile" className="w-16 h-16 rounded-full object-cover border border-border/30" />
+              {(profileForm.profile_image_url as string) && (
+                <img src={profileForm.profile_image_url as string} alt="Profile" className="w-16 h-16 rounded-full object-cover border border-border/30" />
               )}
               <IconUpload
-                value={(getProfileValue("profile_image_url") as string) || ""}
+                value={(profileForm.profile_image_url as string) || ""}
                 onChange={(url) => setProfileForm((p) => ({ ...p, profile_image_url: url }))}
               />
             </div>
@@ -163,40 +221,34 @@ const AboutAdmin = () => {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <Label className="text-muted-foreground text-sm">Full Name</Label>
-              <Input value={getProfileValue("full_name") as string} onChange={(e) => setProfileForm((p) => ({ ...p, full_name: e.target.value }))} className="bg-secondary border-border mt-1" />
+              <Input value={(profileForm.full_name as string) || ""} onChange={(e) => setProfileForm((p) => ({ ...p, full_name: e.target.value }))} className="bg-secondary border-border mt-1" />
             </div>
             <div>
               <Label className="text-muted-foreground text-sm">Tagline</Label>
-              <Input value={getProfileValue("tagline") as string} onChange={(e) => setProfileForm((p) => ({ ...p, tagline: e.target.value }))} className="bg-secondary border-border mt-1" />
+              <Input value={(profileForm.tagline as string) || ""} onChange={(e) => setProfileForm((p) => ({ ...p, tagline: e.target.value }))} className="bg-secondary border-border mt-1" />
             </div>
             <div>
               <Label className="text-muted-foreground text-sm">Contact Number</Label>
-              <Input value={getProfileValue("contact_number") as string} onChange={(e) => setProfileForm((p) => ({ ...p, contact_number: e.target.value }))} className="bg-secondary border-border mt-1" />
+              <Input value={(profileForm.contact_number as string) || ""} onChange={(e) => setProfileForm((p) => ({ ...p, contact_number: e.target.value }))} className="bg-secondary border-border mt-1" />
             </div>
             <div>
               <Label className="text-muted-foreground text-sm">Email Address</Label>
-              <Input value={getProfileValue("email") as string} onChange={(e) => setProfileForm((p) => ({ ...p, email: e.target.value }))} className="bg-secondary border-border mt-1" />
+              <Input value={(profileForm.email as string) || ""} onChange={(e) => setProfileForm((p) => ({ ...p, email: e.target.value }))} className="bg-secondary border-border mt-1" />
             </div>
           </div>
 
           <div>
             <Label className="text-muted-foreground text-sm">Address</Label>
-            <Textarea value={getProfileValue("address") as string} onChange={(e) => setProfileForm((p) => ({ ...p, address: e.target.value }))} className="bg-secondary border-border mt-1" rows={2} />
+            <Textarea value={(profileForm.address as string) || ""} onChange={(e) => setProfileForm((p) => ({ ...p, address: e.target.value }))} className="bg-secondary border-border mt-1" rows={2} />
           </div>
 
           <div className="flex items-center gap-3">
             <Switch
-              checked={(profileForm.is_verified ?? profile?.is_verified ?? false) as boolean}
+              checked={(profileForm.is_verified ?? false) as boolean}
               onCheckedChange={(v) => setProfileForm((p) => ({ ...p, is_verified: v }))}
             />
             <Label className="text-foreground">Verified Badge</Label>
           </div>
-
-          {profileDirty && (
-            <Button onClick={() => updateProfile.mutate()} disabled={updateProfile.isPending}>
-              <Save className="w-4 h-4 mr-2" /> Save Profile
-            </Button>
-          )}
         </div>
       </section>
 
