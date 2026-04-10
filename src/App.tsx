@@ -8,6 +8,7 @@ import AboutUs from "./pages/AboutUs";
 import Network from "./pages/Network";
 import SiteDetail from "./pages/SiteDetail";
 import ProfileDetail from "./pages/ProfileDetail";
+import SitemapRedirect from "./pages/SitemapRedirect";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/network" element={<Network />} />
           <Route path="/site/:slug" element={<SiteDetail />} />
           <Route path="/profile/:slug" element={<ProfileDetail />} />
+          <Route path="/sitemap.xml" element={<SitemapRedirect />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
