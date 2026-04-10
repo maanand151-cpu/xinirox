@@ -22,12 +22,15 @@ const SeoHead = ({ title, description, canonical }: SeoHeadProps) => {
     };
 
     setMeta("description", description);
+    setMeta("robots", "index, follow");
     setMeta("og:title", title, true);
     setMeta("og:description", description, true);
+    setMeta("og:type", "website", true);
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
 
     if (canonical) {
+      setMeta("og:url", canonical, true);
       let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
       if (!link) {
         link = document.createElement("link");
