@@ -14,6 +14,9 @@ const Navbar = () => {
           <a href="/#social" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             Social
           </a>
+          <Link to="/network" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
+            Network
+          </Link>
           <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hidden sm:block tracking-wide">
             About Us
           </Link>

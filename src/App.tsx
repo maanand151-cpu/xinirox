@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
 import AboutUs from "./pages/AboutUs";
+import Network from "./pages/Network";
+import SiteDetail from "./pages/SiteDetail";
+import ProfileDetail from "./pages/ProfileDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -19,6 +22,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/network" element={<Network />} />
+          <Route path="/site/:slug" element={<SiteDetail />} />
+          <Route path="/profile/:slug" element={<ProfileDetail />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
