@@ -9,6 +9,7 @@ import { Plus, Pencil, Trash2, X, Globe, Share2, User } from "lucide-react";
 import WebsiteForm from "@/components/admin/WebsiteForm";
 import SocialMediaForm from "@/components/admin/SocialMediaForm";
 import AboutAdmin from "@/components/admin/AboutAdmin";
+import IndexingConsole from "@/components/admin/IndexingConsole";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Website = Tables<"websites">;
@@ -215,6 +216,9 @@ const AdminDashboard = () => {
             </div>
           )}
         </section>
+
+        {/* Indexing Console */}
+        <IndexingConsole websites={websites} socials={socials} />
 
         {/* About Us */}
         <section>
