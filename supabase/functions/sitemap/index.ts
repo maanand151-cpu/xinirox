@@ -10,7 +10,18 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "*",
+      },
+    });
+  }
+
   const supabase = createClient(supabaseUrl, supabaseKey);
   const baseUrl = "https://xinirox.lovable.app";
   const now = new Date().toISOString().split("T")[0];
@@ -52,6 +63,10 @@ ${urls.map((u) => `  <url>
 </urlset>`;
 
   return new Response(xml, {
-    headers: { "Content-Type": "application/xml; charset=utf-8" },
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+      "Access-Control-Allow-Origin": "*",
+    },
   });
 });
