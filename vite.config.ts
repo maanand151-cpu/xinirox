@@ -37,10 +37,10 @@ function sitemapPlugin(): Plugin {
           { loc: `${base}/network`, lastmod: now, priority: "0.9" },
         ];
 
-        for (const s of websites || []) {
+        for (const s of (Array.isArray(websites) ? websites : [])) {
           urls.push({ loc: `${base}/site/${slugify(s.name)}`, lastmod: s.updated_at?.split("T")[0] || now, priority: "0.8" });
         }
-        for (const s of socials || []) {
+        for (const s of (Array.isArray(socials) ? socials : [])) {
           urls.push({ loc: `${base}/profile/${slugify(s.platform_name + "-" + s.owner_name)}`, lastmod: s.updated_at?.split("T")[0] || now, priority: "0.7" });
         }
 
