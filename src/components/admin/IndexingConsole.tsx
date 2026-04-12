@@ -84,7 +84,7 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
               ) : type === "social" ? (
                 <Share2 className="w-4 h-4 text-primary/60 shrink-0" />
               ) : (
-                <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">{label}</p>
