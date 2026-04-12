@@ -97,7 +97,7 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
                 onClick={() => copyUrl(url)}
               >
                 {copied === url ? (
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-primary" />
                 ) : (
                   <Copy className="w-4 h-4" />
                 )}

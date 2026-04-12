@@ -99,7 +99,7 @@ async function fetchTable<T>(endpoint: string): Promise<T[]> {
     throw new Error(`Failed to fetch ${endpoint}: ${response.status}`);
   }
 
-  const data = await response.json();
+  const data: unknown = await response.json();
   return Array.isArray(data) ? data : [];
 }
 
@@ -115,8 +115,12 @@ async function fetchSingle<T>(endpoint: string): Promise<T | null> {
     return null;
   }
 
-  const data = await response.json();
-  return Array.isArray(data) ? (data[0] ?? null) : data;
+  const data: unknown = await response.json();
+  if (Array.isArray(data)) {
+    return ((data[0] as T | undefined) ?? null);
+  }
+
+  return (data as T) ?? null;
 }
 
 async function fetchSupabaseData() {
