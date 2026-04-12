@@ -18,7 +18,6 @@ const BASE = "https://xinirox.lovable.app";
 const SITEMAP_URL = `${BASE}/sitemap.xml`;
 
 const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
-  const [pinging, setPinging] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
   const allUrls = [
@@ -44,16 +43,8 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const pingGoogle = async () => {
-    setPinging(true);
-    try {
-      await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(SITEMAP_URL)}`, { mode: "no-cors" });
-      toast.success("Google pinged! Sitemap submitted for crawling.");
-    } catch {
-      toast.info("Ping sent (Google may take time to process).");
-    } finally {
-      setPinging(false);
-    }
+  const openSitemap = () => {
+    window.open(SITEMAP_URL, "_blank");
   };
 
   const openSearchConsole = () => {
@@ -73,13 +64,13 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
               <Button size="sm" variant="outline" onClick={openSearchConsole}>
                 <ExternalLink className="w-3 h-3 mr-1" /> Search Console
               </Button>
-              <Button size="sm" onClick={pingGoogle} disabled={pinging}>
-                {pinging ? "Pinging..." : "Ping Google"}
+              <Button size="sm" onClick={openSitemap}>
+                <ExternalLink className="w-3 h-3 mr-1" /> Open Sitemap
               </Button>
             </div>
           </div>
           <p className="text-sm text-muted-foreground mt-1">
-            {allUrls.length} URLs indexed • Copy any URL to submit manually to Google Search Console
+            {allUrls.length} URLs prepared for Google discovery • Copy any URL to inspect in Google Search Console
           </p>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -93,7 +84,7 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
               ) : type === "social" ? (
                 <Share2 className="w-4 h-4 text-primary/60 shrink-0" />
               ) : (
-                <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">{label}</p>
@@ -106,7 +97,7 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
                 onClick={() => copyUrl(url)}
               >
                 {copied === url ? (
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-primary" />
                 ) : (
                   <Copy className="w-4 h-4" />
                 )}
@@ -116,7 +107,7 @@ const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {
 
           <div className="pt-4 border-t border-border/20">
             <p className="text-xs text-muted-foreground">
-              <strong>How to index:</strong> Copy a URL → Open Google Search Console → URL Inspection → Paste URL → Request Indexing
+              <strong>Fastest supported flow:</strong> Sitemap + internal links + structured data + Search Console URL Inspection. Google does not provide direct API-based request indexing for normal website pages.
             </p>
           </div>
         </CardContent>
