@@ -56,11 +56,11 @@ const AdminDashboard = () => {
   });
 
   const websiteMutation = useMutation({
-    mutationFn: async (data: { id?: string; name: string; url: string; owner_name: string; icon_url: string }) => {
+    mutationFn: async (data: { id?: string; name: string; url: string; owner_name: string; icon_url: string; category: string }) => {
       if (data.id) {
-        await adminCrud({ action: "update", table: "websites", id: data.id, data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null } });
+        await adminCrud({ action: "update", table: "websites", id: data.id, data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null, category: data.category || "" } });
       } else {
-        await adminCrud({ action: "insert", table: "websites", data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null } });
+        await adminCrud({ action: "insert", table: "websites", data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null, category: data.category || "" } });
       }
     },
     onSuccess: () => {
