@@ -139,6 +139,7 @@ export type Database = {
       }
       websites: {
         Row: {
+          category: string
           created_at: string
           icon_url: string | null
           id: string
@@ -148,6 +149,7 @@ export type Database = {
           url: string
         }
         Insert: {
+          category?: string
           created_at?: string
           icon_url?: string | null
           id?: string
@@ -157,6 +159,7 @@ export type Database = {
           url: string
         }
         Update: {
+          category?: string
           created_at?: string
           icon_url?: string | null
           id?: string
