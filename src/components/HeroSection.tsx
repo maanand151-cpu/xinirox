@@ -42,6 +42,7 @@ const HeroSection = () => {
         toast.error("Access denied");
       } else {
         sessionStorage.setItem("admin_token", data.token);
+        sessionStorage.setItem("admin_password", password);
         toast.success("Welcome back!");
         setShowPasswordDialog(false);
         setPassword("");
