@@ -1,0 +1,1 @@
+ALTER TABLE public.websites ADD COLUMN category text NOT NULL DEFAULT '';

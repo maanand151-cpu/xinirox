@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import AppShell from "@/components/AppShell";
+import SeoHead from "@/components/SeoHead";
 import AboutProfile from "@/components/about/AboutProfile";
 import AboutDetails from "@/components/about/AboutDetails";
 import AboutAchievements from "@/components/about/AboutAchievements";
@@ -36,38 +36,32 @@ const AboutUs = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-16">
-        {/* Hero area */}
-        <section className="relative py-24 px-4 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/3 blur-[120px]" />
-          <div className="absolute inset-0 bg-noise opacity-30" />
+    <AppShell>
+      <SeoHead
+        title="About Xini Rox – Vision, Mission & Story"
+        description="Learn about Xini Rox (Aanand Maurya), a visionary business manager and entrepreneur."
+        canonical="https://xinirox.lovable.app/about"
+      />
+      <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
+        <div className="text-center mb-10">
+          <span className="text-xs font-medium tracking-[0.3em] uppercase text-primary/70 border border-primary/20 px-3 py-1.5 rounded-full">
+            About Us
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-bold font-serif text-gradient-gold mt-4 mb-3">
+            Know Who We Are
+          </h1>
+          <div className="divider-gold w-24 mx-auto" />
+        </div>
 
-          <div className="relative z-10 max-w-4xl mx-auto">
-            <div className="text-center mb-4">
-              <span className="text-xs font-medium tracking-[0.4em] uppercase text-primary/70 border border-primary/20 px-4 py-2 rounded-full">
-                About Us
-              </span>
-            </div>
-            <h1 className="text-4xl sm:text-6xl font-bold font-serif text-center mb-6 text-gradient-gold">
-              Know Who We Are
-            </h1>
-            <div className="divider-gold w-24 mx-auto mb-12" />
-
-            <AboutProfile profile={profile} />
-          </div>
-        </section>
+        <AboutProfile profile={profile} />
 
         {profile && <AboutDetails profile={profile} />}
 
         {achievements.length > 0 && <AboutAchievements achievements={achievements} />}
 
         {gallery.length > 0 && <AboutGallery gallery={gallery} />}
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </AppShell>
   );
 };
 

@@ -455,6 +455,8 @@ function createSocialPage(social: SocialRecord, data: Awaited<ReturnType<typeof 
 function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const urls = [
     { loc: `${BASE_URL}/`, lastmod: TODAY, priority: "1.0" },
+    { loc: `${BASE_URL}/websites`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/social`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/network`, lastmod: TODAY, priority: "0.9" },
     ...data.websites.map((site) => ({
@@ -505,6 +507,8 @@ function seoStaticPagesPlugin(): Plugin {
         };
 
         writePage("index.html", createHomePage(data));
+        writePage("websites/index.html", createHomePage(data));
+        writePage("social/index.html", createHomePage(data));
         writePage("about/index.html", createAboutPage(data));
         writePage("network/index.html", createNetworkPage(data));
 
