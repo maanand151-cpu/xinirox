@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { adminCrud } from "@/lib/adminCrud";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -57,11 +58,9 @@ const AdminDashboard = () => {
   const websiteMutation = useMutation({
     mutationFn: async (data: { id?: string; name: string; url: string; owner_name: string; icon_url: string }) => {
       if (data.id) {
-        const { error } = await supabase.from("websites").update({ name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null }).eq("id", data.id);
-        if (error) throw error;
+        await adminCrud({ action: "update", table: "websites", id: data.id, data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null } });
       } else {
-        const { error } = await supabase.from("websites").insert({ name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null });
-        if (error) throw error;
+        await adminCrud({ action: "insert", table: "websites", data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null } });
       }
     },
     onSuccess: () => {
@@ -75,8 +74,7 @@ const AdminDashboard = () => {
 
   const deleteWebsite = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("websites").delete().eq("id", id);
-      if (error) throw error;
+      await adminCrud({ action: "delete", table: "websites", id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["websites"] });
@@ -87,11 +85,9 @@ const AdminDashboard = () => {
   const socialMutation = useMutation({
     mutationFn: async (data: { id?: string; platform_name: string; profile_url: string; owner_name: string; icon_url: string }) => {
       if (data.id) {
-        const { error } = await supabase.from("social_media").update({ platform_name: data.platform_name, profile_url: data.profile_url, owner_name: data.owner_name, icon_url: data.icon_url || null }).eq("id", data.id);
-        if (error) throw error;
+        await adminCrud({ action: "update", table: "social_media", id: data.id, data: { platform_name: data.platform_name, profile_url: data.profile_url, owner_name: data.owner_name, icon_url: data.icon_url || null } });
       } else {
-        const { error } = await supabase.from("social_media").insert({ platform_name: data.platform_name, profile_url: data.profile_url, owner_name: data.owner_name, icon_url: data.icon_url || null });
-        if (error) throw error;
+        await adminCrud({ action: "insert", table: "social_media", data: { platform_name: data.platform_name, profile_url: data.profile_url, owner_name: data.owner_name, icon_url: data.icon_url || null } });
       }
     },
     onSuccess: () => {
@@ -105,8 +101,7 @@ const AdminDashboard = () => {
 
   const deleteSocial = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("social_media").delete().eq("id", id);
-      if (error) throw error;
+      await adminCrud({ action: "delete", table: "social_media", id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["social_media"] });
@@ -116,6 +111,7 @@ const AdminDashboard = () => {
 
   const handleExit = () => {
     sessionStorage.removeItem("admin_token");
+    sessionStorage.removeItem("admin_password");
     navigate("/");
   };
 
