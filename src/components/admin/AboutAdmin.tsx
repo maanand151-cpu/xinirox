@@ -161,12 +161,14 @@ const AboutAdmin = () => {
   });
 
   const handleGalleryUpload = async (file: File) => {
-    const ext = file.name.split(".").pop();
-    const path = `gallery/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("icons").upload(path, file);
-    if (error) { toast.error("Upload failed"); return; }
-    const { data: urlData } = supabase.storage.from("icons").getPublicUrl(path);
-    addGalleryImage.mutate(urlData.publicUrl);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `gallery/${Date.now()}.${ext}`;
+      const url = await adminUpload(file, path);
+      addGalleryImage.mutate(url);
+    } catch {
+      toast.error("Upload failed");
+    }
   };
 
   if (profileLoading) {
