@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { adminCrud } from "@/lib/adminCrud";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,14 +21,13 @@ const AboutAdmin = () => {
     queryFn: async () => {
       const { data, error } = await supabase.from("about_profile").select("*").limit(1).single();
       if (error && error.code === "PGRST116") {
-        // No profile row exists — create one
-        const { data: newData, error: insertErr } = await supabase
-          .from("about_profile")
-          .insert({ full_name: "Xini Rox", tagline: "Business Manager & Digital Entrepreneur" })
-          .select()
-          .single();
-        if (insertErr) throw insertErr;
-        return newData;
+        // No profile row exists — create one via admin edge function
+        const result = await adminCrud({
+          action: "insert",
+          table: "about_profile",
+          data: { full_name: "Xini Rox", tagline: "Business Manager & Digital Entrepreneur" },
+        });
+        return result?.data?.[0] ?? null;
       }
       if (error) throw error;
       return data;
@@ -36,7 +36,6 @@ const AboutAdmin = () => {
 
   const [profileForm, setProfileForm] = useState<Record<string, string | boolean>>({});
 
-  // Sync profile data into form when loaded
   useEffect(() => {
     if (profile) {
       setProfileForm({
@@ -57,9 +56,11 @@ const AboutAdmin = () => {
         toast.error("Profile not loaded yet");
         return;
       }
-      const { error } = await supabase
-        .from("about_profile")
-        .update({
+      await adminCrud({
+        action: "update",
+        table: "about_profile",
+        id: profile.id,
+        data: {
           full_name: profileForm.full_name as string,
           tagline: profileForm.tagline as string,
           contact_number: profileForm.contact_number as string,
@@ -67,9 +68,8 @@ const AboutAdmin = () => {
           address: profileForm.address as string,
           profile_image_url: profileForm.profile_image_url as string,
           is_verified: profileForm.is_verified as boolean,
-        })
-        .eq("id", profile.id);
-      if (error) throw error;
+        },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["about_profile"] });
@@ -97,12 +97,10 @@ const AboutAdmin = () => {
   const achMutation = useMutation({
     mutationFn: async (data: { id?: string; title: string; description: string }) => {
       if (data.id) {
-        const { error } = await supabase.from("about_achievements").update({ title: data.title, description: data.description }).eq("id", data.id);
-        if (error) throw error;
+        await adminCrud({ action: "update", table: "about_achievements", id: data.id, data: { title: data.title, description: data.description } });
       } else {
         const maxOrder = achievements.length > 0 ? Math.max(...achievements.map((a) => a.sort_order)) + 1 : 0;
-        const { error } = await supabase.from("about_achievements").insert({ title: data.title, description: data.description, sort_order: maxOrder });
-        if (error) throw error;
+        await adminCrud({ action: "insert", table: "about_achievements", data: { title: data.title, description: data.description, sort_order: maxOrder } });
       }
     },
     onSuccess: () => {
@@ -116,8 +114,7 @@ const AboutAdmin = () => {
 
   const deleteAch = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("about_achievements").delete().eq("id", id);
-      if (error) throw error;
+      await adminCrud({ action: "delete", table: "about_achievements", id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["about_achievements"] });
@@ -141,8 +138,7 @@ const AboutAdmin = () => {
   const addGalleryImage = useMutation({
     mutationFn: async (imageUrl: string) => {
       const maxOrder = gallery.length > 0 ? Math.max(...gallery.map((g) => g.sort_order)) + 1 : 0;
-      const { error } = await supabase.from("about_gallery").insert({ image_url: imageUrl, caption: galleryCaption, sort_order: maxOrder });
-      if (error) throw error;
+      await adminCrud({ action: "insert", table: "about_gallery", data: { image_url: imageUrl, caption: galleryCaption, sort_order: maxOrder } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["about_gallery"] });
@@ -155,8 +151,7 @@ const AboutAdmin = () => {
 
   const deleteGalleryImage = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("about_gallery").delete().eq("id", id);
-      if (error) throw error;
+      await adminCrud({ action: "delete", table: "about_gallery", id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["about_gallery"] });
@@ -191,11 +186,7 @@ const AboutAdmin = () => {
             <User className="w-5 h-5 text-primary" />
             <h2 className="text-2xl font-serif font-bold text-foreground">About Profile</h2>
           </div>
-          <Button
-            onClick={() => updateProfile.mutate()}
-            disabled={updateProfile.isPending}
-            className="gap-2"
-          >
+          <Button onClick={() => updateProfile.mutate()} disabled={updateProfile.isPending} className="gap-2">
             {updateProfile.isPending ? (
               <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
             ) : (
@@ -211,10 +202,7 @@ const AboutAdmin = () => {
               {(profileForm.profile_image_url as string) && (
                 <img src={profileForm.profile_image_url as string} alt="Profile" className="w-16 h-16 rounded-full object-cover border border-border/30" />
               )}
-              <IconUpload
-                value={(profileForm.profile_image_url as string) || ""}
-                onChange={(url) => setProfileForm((p) => ({ ...p, profile_image_url: url }))}
-              />
+              <IconUpload value={(profileForm.profile_image_url as string) || ""} onChange={(url) => setProfileForm((p) => ({ ...p, profile_image_url: url }))} />
             </div>
           </div>
 
@@ -243,10 +231,7 @@ const AboutAdmin = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Switch
-              checked={(profileForm.is_verified ?? false) as boolean}
-              onCheckedChange={(v) => setProfileForm((p) => ({ ...p, is_verified: v }))}
-            />
+            <Switch checked={(profileForm.is_verified ?? false) as boolean} onCheckedChange={(v) => setProfileForm((p) => ({ ...p, is_verified: v }))} />
             <Label className="text-foreground">Verified Badge</Label>
           </div>
         </div>
@@ -284,16 +269,11 @@ const AboutAdmin = () => {
           <CardContent className="p-4 space-y-3">
             <Input placeholder="Achievement title" value={achForm.title} onChange={(e) => setAchForm((f) => ({ ...f, title: e.target.value }))} className="bg-secondary border-border" />
             <Input placeholder="Description (optional)" value={achForm.description} onChange={(e) => setAchForm((f) => ({ ...f, description: e.target.value }))} className="bg-secondary border-border" />
-            <Button
-              disabled={!achForm.title || achMutation.isPending}
-              onClick={() => achMutation.mutate({ id: editingAch || undefined, title: achForm.title, description: achForm.description })}
-            >
+            <Button disabled={!achForm.title || achMutation.isPending} onClick={() => achMutation.mutate({ id: editingAch || undefined, title: achForm.title, description: achForm.description })}>
               <Plus className="w-4 h-4 mr-2" /> {editingAch ? "Update" : "Add"} Achievement
             </Button>
             {editingAch && (
-              <Button variant="ghost" onClick={() => { setEditingAch(null); setAchForm({ title: "", description: "" }); }}>
-                Cancel
-              </Button>
+              <Button variant="ghost" onClick={() => { setEditingAch(null); setAchForm({ title: "", description: "" }); }}>Cancel</Button>
             )}
           </CardContent>
         </Card>
@@ -311,10 +291,7 @@ const AboutAdmin = () => {
             {gallery.map((img) => (
               <div key={img.id} className="relative group aspect-square rounded-lg overflow-hidden border border-border/30">
                 <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
-                <button
-                  onClick={() => deleteGalleryImage.mutate(img.id)}
-                  className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                >
+                <button onClick={() => deleteGalleryImage.mutate(img.id)} className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
@@ -326,16 +303,9 @@ const AboutAdmin = () => {
           <CardContent className="p-4 space-y-3">
             <div>
               <Label className="text-muted-foreground text-sm">Upload Image</Label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => { if (e.target.files?.[0]) handleGalleryUpload(e.target.files[0]); }}
-                className="mt-1 block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-secondary file:text-foreground hover:file:bg-secondary/80"
-              />
+              <input type="file" accept="image/*" onChange={(e) => { if (e.target.files?.[0]) handleGalleryUpload(e.target.files[0]); }} className="mt-1 block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-secondary file:text-foreground hover:file:bg-secondary/80" />
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>— or —</span>
-            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground"><span>— or —</span></div>
             <Input placeholder="Image URL" value={galleryUrl} onChange={(e) => setGalleryUrl(e.target.value)} className="bg-secondary border-border" />
             <Input placeholder="Caption (optional)" value={galleryCaption} onChange={(e) => setGalleryCaption(e.target.value)} className="bg-secondary border-border" />
             {galleryUrl && (
