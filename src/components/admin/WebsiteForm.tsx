@@ -11,7 +11,7 @@ type Website = Tables<"websites">;
 interface WebsiteFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { name: string; url: string; owner_name: string; icon_url: string }) => void;
+  onSubmit: (data: { name: string; url: string; owner_name: string; icon_url: string; category: string }) => void;
   initial?: Website | null;
   loading?: boolean;
 }
@@ -21,6 +21,7 @@ const WebsiteForm = ({ open, onClose, onSubmit, initial, loading }: WebsiteFormP
   const [url, setUrl] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [iconUrl, setIconUrl] = useState("");
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     if (initial) {
@@ -28,17 +29,19 @@ const WebsiteForm = ({ open, onClose, onSubmit, initial, loading }: WebsiteFormP
       setUrl(initial.url);
       setOwnerName(initial.owner_name);
       setIconUrl(initial.icon_url || "");
+      setCategory(initial.category || "");
     } else {
       setName("");
       setUrl("");
       setOwnerName("");
       setIconUrl("");
+      setCategory("");
     }
   }, [initial, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ name, url, owner_name: ownerName, icon_url: iconUrl });
+    onSubmit({ name, url, owner_name: ownerName, icon_url: iconUrl, category });
   };
 
   return (
@@ -62,6 +65,10 @@ const WebsiteForm = ({ open, onClose, onSubmit, initial, loading }: WebsiteFormP
           <div>
             <Label>Owner Name</Label>
             <Input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} required className="bg-secondary border-border" />
+          </div>
+          <div>
+            <Label>Category</Label>
+            <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. Shopping, Education, Tech" className="bg-secondary border-border" />
           </div>
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Saving..." : initial ? "Update" : "Add Website"}
