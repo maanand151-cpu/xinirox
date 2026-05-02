@@ -55,6 +55,330 @@
       }
     }
     </script>
+
+    <!-- Full Entity Graph: Person, Organization, WebSite, ProfilePage, CollectionPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://xinirox.co.in/#person",
+          "name": "Aanand Maurya",
+          "alternateName": ["Xini Rox", "XiniRox", "Aanand Kumar Maurya"],
+          "givenName": "Aanand",
+          "familyName": "Maurya",
+          "additionalName": "Kumar",
+          "gender": "Male",
+          "birthPlace": {
+            "@type": "Place",
+            "name": "Khajni, Gorakhpur, Uttar Pradesh, India"
+          },
+          "homeLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Khajni",
+              "addressLocality": "Gorakhpur",
+              "addressRegion": "Uttar Pradesh",
+              "postalCode": "273408",
+              "addressCountry": "IN"
+            }
+          },
+          "email": "mailto:maanand151@gmail.com",
+          "url": "https://xinirox.co.in",
+          "image": "https://xinirox.co.in/profile.jpg",
+          "jobTitle": "Digital Entrepreneur, Content Creator & System Builder",
+          "worksFor": {
+            "@type": "Organization",
+            "@id": "https://xinirox.co.in/#organization",
+            "name": "Xini Rox Super Hub"
+          },
+          "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": "Deendayal Upadhyay Gorakhpur University"
+          },
+          "knowsAbout": [
+            "Digital Marketing",
+            "Web Development",
+            "Content Creation",
+            "Entrepreneurship",
+            "System Architecture",
+            "Brand Building",
+            "Social Media Strategy",
+            "Business Management",
+            "EdTech",
+            "Fitness Business",
+            "Beauty Services",
+            "E-Commerce",
+            "AI in Education"
+          ],
+          "hasOccupation": [
+            {"@type": "Occupation", "name": "Digital Entrepreneur", "occupationLocation": "Gorakhpur, Uttar Pradesh, India"},
+            {"@type": "Occupation", "name": "Content Creator", "occupationLocation": "India"},
+            {"@type": "Occupation", "name": "Business Manager", "occupationLocation": "India"},
+            {"@type": "Occupation", "name": "System Architect", "occupationLocation": "India"}
+          ],
+          "owns": [
+            {
+              "@type": "WebSite",
+              "@id": "https://xinirox.co.in/#website",
+              "name": "Xini Rox Super Hub",
+              "url": "https://xinirox.co.in/",
+              "description": "Primary digital identity hub and central dashboard of the Xini Rox ecosystem. Connects all ventures, social profiles, and projects in one unified network.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"},
+              "inLanguage": ["en-IN", "hi-IN"]
+            },
+            {
+              "@type": "WebSite",
+              "name": "Aaradhya Multi Shop",
+              "url": "https://aaradhyamultyshop.lovable.app/",
+              "description": "Multi-category e-commerce platform offering curated digital products, lifestyle items, and local artisan goods with secure checkout and regional delivery.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"},
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://aaradhyamultyshop.lovable.app/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            },
+            {
+              "@type": "WebSite",
+              "name": "Bachat Adda",
+              "alternateName": "Sathi Savings Buddy",
+              "url": "https://sathi-savings-buddy.lovable.app/",
+              "description": "Financial literacy and savings awareness platform with smart budgeting tools, investment guides, and interactive money management modules for Indian households.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "WebSite",
+              "name": "DJ Shubham",
+              "url": "https://djshubham.lovable.app/",
+              "description": "Music production, event DJ services, and digital audio entertainment venture featuring portfolio showcase, event booking, and audio samples.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "WebSite",
+              "name": "Ram Classes",
+              "url": "https://ramclasses.lovable.app/",
+              "description": "Online education platform offering academic coaching, skill development courses, video lessons, practice quizzes, and exam preparation resources.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"},
+              "educationalUse": "Course",
+              "audience": {"@type": "EducationalAudience", "educationalRole": "student"}
+            },
+            {
+              "@type": "WebSite",
+              "name": "Aaradhya Certifies Hub",
+              "url": "https://aaradhya-certify-hub.lovable.app/",
+              "description": "Professional certification and skill verification platform for career advancement. Features course enrollment, assessments, digital certificates, and employer verification API.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"},
+              "offers": {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "EducationalOccupationalCredential",
+                  "name": "Professional Certification Programs",
+                  "credentialCategory": "certificate"
+                }
+              }
+            },
+            {
+              "@type": "WebSite",
+              "name": "Maa Sharda Classes",
+              "url": "https://maashardaapp.lovable.app/",
+              "description": "Dedicated learning app for school-level education (Classes 1-12) and competitive exam preparation with CBSE/UP Board alignment, video tutorials, and parent progress reports.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"},
+              "educationalUse": "Course",
+              "audience": {"@type": "EducationalAudience", "educationalRole": "student"}
+            },
+            {
+              "@type": "WebSite",
+              "name": "Infinity Gym",
+              "url": "https://infinitygymmayank.lovable.app/",
+              "description": "Fitness center management platform offering workout plans, health tracking, membership management, trainer connectivity, and nutrition guides.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "WebSite",
+              "name": "Laxmi Beauty Parlour",
+              "url": "https://laxmiparlour.lovable.app",
+              "description": "Beauty services booking platform featuring salon appointments, service menus, before/after gallery, customer reviews, and loyalty rewards.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "WebSite",
+              "name": "U.P.S.D.D.I College AI",
+              "url": "https://upsddicollage.lovable.app",
+              "description": "AI-powered educational resource hub for college students featuring AI study assistant, assignment helper, citation generator, career roadmap planner, and peer collaboration space.",
+              "publisher": {"@id": "https://xinirox.co.in/#person"}
+            }
+          ],
+          "sameAs": [
+            "https://xinirox.co.in",
+            "https://youtube.com/@XiniRox",
+            "https://youtube.com/@XiniPulse",
+            "https://instagram.com/xinirox",
+            "https://instagram.com/x._.anand.maurya",
+            "https://facebook.com/xinirox",
+            "https://linkedin.com/in/anand-maurya-884831364",
+            "https://github.com/maurya-anand",
+            "https://quora.com/profile/Aanand-Maurya-Xini-Rox",
+            "https://twitter.com/xinirox"
+          ],
+          "brand": {
+            "@type": "Brand",
+            "name": "Xini Rox",
+            "alternateName": "XiniRox",
+            "url": "https://xinirox.co.in",
+            "logo": "https://xinirox.co.in/logo.png",
+            "description": "Digital identity brand representing Aanand Maurya's entrepreneurial ecosystem of 10+ websites and 24+ projects."
+          },
+          "makesOffer": [
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Digital Strategy Consulting",
+                "description": "End-to-end digital presence building, brand positioning, audience targeting, and growth roadmaps for entrepreneurs."
+              },
+              "provider": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Content Creation & Management",
+                "description": "YouTube scripting, Instagram Reels strategy, SEO blog writing, and community engagement frameworks."
+              },
+              "provider": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Web Development & System Architecture",
+                "description": "Custom websites, micro-site networks, API integrations, and scalable hub engineering."
+              },
+              "provider": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "EdTech Platform Development",
+                "description": "Learning Management Systems, interactive course builders, and certification automation."
+              },
+              "provider": {"@id": "https://xinirox.co.in/#person"}
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Local Business Digitalization",
+                "description": "Helping gyms, parlours, coaching centers, and retail shops establish online presence with booking systems and digital tools."
+              },
+              "provider": {"@id": "https://xinirox.co.in/#person"}
+            }
+          ],
+          "award": "Founder of Xini Rox Super Hub — 10 Websites, 16+ Social Profiles, 24+ Active Projects",
+          "description": "Aanand Maurya, professionally known as Xini Rox, is a digital entrepreneur, content creator, and system builder from Gorakhpur, Uttar Pradesh, India. He is the founder of Xini Rox Super Hub — a centralized digital identity network connecting 10+ ventures including Aaradhya Multi Shop, Bachat Adda, DJ Shubham, Ram Classes, Maa Sharda Classes, Infinity Gym, Laxmi Beauty Parlour, and U.P.S.D.D.I College AI. His mission is to build powerful, interconnected digital ecosystems that empower entrepreneurs, educators, and local businesses across India."
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://xinirox.co.in/#organization",
+          "name": "Xini Rox Super Hub",
+          "alternateName": ["Xini Rox Network", "Xini Rox Ecosystem", "XiniRox Digital"],
+          "url": "https://xinirox.co.in",
+          "logo": "https://xinirox.co.in/logo.png",
+          "founder": {"@id": "https://xinirox.co.in/#person"},
+          "foundingDate": "2024",
+          "foundingLocation": {
+            "@type": "Place",
+            "name": "Gorakhpur, Uttar Pradesh, India"
+          },
+          "location": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Gorakhpur",
+              "addressRegion": "Uttar Pradesh",
+              "addressCountry": "IN"
+            }
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Business Inquiry",
+            "email": "maanand151@gmail.com",
+            "url": "https://xinirox.co.in/contact",
+            "availableLanguage": ["en-IN", "hi-IN"]
+          },
+          "sameAs": [
+            "https://xinirox.co.in",
+            "https://youtube.com/@XiniRox",
+            "https://instagram.com/xinirox",
+            "https://facebook.com/xinirox",
+            "https://linkedin.com/in/anand-maurya-884831364"
+          ],
+          "hasPart": [
+            {"@type": "Organization", "name": "Aaradhya Multi Shop", "description": "E-commerce and multi-category retail venture", "url": "https://aaradhyamultyshop.lovable.app/"},
+            {"@type": "Organization", "name": "Bachat Adda", "description": "Financial awareness and savings platform", "url": "https://sathi-savings-buddy.lovable.app/"},
+            {"@type": "Organization", "name": "Ram Classes", "description": "Online education and coaching platform", "url": "https://ramclasses.lovable.app/"},
+            {"@type": "Organization", "name": "Maa Sharda Classes", "description": "School-level and competitive exam preparation app", "url": "https://maashardaapp.lovable.app/"},
+            {"@type": "Organization", "name": "Infinity Gym", "description": "Fitness center and health tracking services", "url": "https://infinitygymmayank.lovable.app/"},
+            {"@type": "Organization", "name": "Laxmi Beauty Parlour", "description": "Beauty services and salon booking platform", "url": "https://laxmiparlour.lovable.app"}
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "reviewCount": "1",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://xinirox.co.in/#website",
+          "name": "Xini Rox Super Hub",
+          "url": "https://xinirox.co.in/",
+          "description": "Official digital identity hub of Aanand Maurya (Xini Rox)",
+          "publisher": {"@id": "https://xinirox.co.in/#person"},
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://xinirox.co.in/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          },
+          "inLanguage": ["en-IN", "hi-IN"],
+          "isPartOf": {"@id": "https://xinirox.co.in/#organization"}
+        },
+        {
+          "@type": "ProfilePage",
+          "mainEntity": {"@id": "https://xinirox.co.in/#person"},
+          "url": "https://xinirox.co.in/about",
+          "name": "About Xini Rox — Aanand Maurya | Official Profile",
+          "description": "Complete verified profile and digital ecosystem of Xini Rox (Aanand Maurya) including all websites, social profiles, services, and projects."
+        },
+        {
+          "@type": "CollectionPage",
+          "name": "Xini Rox Projects Collection",
+          "url": "https://xinirox.co.in/projects",
+          "description": "Catalog of all 24+ active projects under the Xini Rox network",
+          "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": [
+              {"@type": "ListItem", "position": 1, "name": "Xini Rox Super Hub", "url": "https://xinirox.co.in/"},
+              {"@type": "ListItem", "position": 2, "name": "Aaradhya Multi Shop", "url": "https://aaradhyamultyshop.lovable.app/"},
+              {"@type": "ListItem", "position": 3, "name": "Bachat Adda", "url": "https://sathi-savings-buddy.lovable.app/"},
+              {"@type": "ListItem", "position": 4, "name": "DJ Shubham", "url": "https://djshubham.lovable.app/"},
+              {"@type": "ListItem", "position": 5, "name": "Ram Classes", "url": "https://ramclasses.lovable.app/"},
+              {"@type": "ListItem", "position": 6, "name": "Aaradhya Certifies Hub", "url": "https://aaradhya-certify-hub.lovable.app/"},
+              {"@type": "ListItem", "position": 7, "name": "Maa Sharda Classes", "url": "https://maashardaapp.lovable.app/"},
+              {"@type": "ListItem", "position": 8, "name": "Infinity Gym", "url": "https://infinitygymmayank.lovable.app/"},
+              {"@type": "ListItem", "position": 9, "name": "Laxmi Beauty Parlour", "url": "https://laxmiparlour.lovable.app"},
+              {"@type": "ListItem", "position": 10, "name": "U.P.S.D.D.I College AI", "url": "https://upsddicollage.lovable.app"}
+            ]
+          }
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>
