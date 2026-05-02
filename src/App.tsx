@@ -12,6 +12,7 @@ import SiteDetail from "./pages/SiteDetail";
 import ProfileDetail from "./pages/ProfileDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import AutoSchema from "./components/AutoSchema";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AutoSchema />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/websites" element={<WebsitesPage />} />
