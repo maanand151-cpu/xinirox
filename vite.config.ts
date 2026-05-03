@@ -3,6 +3,7 @@ import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { ARTICLES, type Article } from "./src/content/articles";
 
 const SUPABASE_URL = "https://lswynjfkkutmttcqoaqo.supabase.co";
 const SUPABASE_KEY =
@@ -452,6 +453,139 @@ function createSocialPage(social: SocialRecord, data: Awaited<ReturnType<typeof 
   };
 }
 
+function createArticlesIndexPage(data: Awaited<ReturnType<typeof fetchSupabaseData>>): SeoPage {
+  return {
+    title: "Xini Rox Articles — Bio, Network & Authority Content",
+    description:
+      "Authoritative articles about Xini Rox (Aanand Maurya): biography, business network, and the story behind Xini Rox Super Hub.",
+    canonical: `${BASE_URL}/articles`,
+    body: renderShell(
+      "Authority Library",
+      "Articles about Xini Rox",
+      "Long-form, Google-readable content establishing the Xini Rox identity, network, and story.",
+      [
+        renderCard(
+          "All Articles",
+          renderLinkList(
+            ARTICLES.map(
+              (a) =>
+                `<li><a href="/articles/${a.slug}" style="color:#f4d57b;"><strong>${escapeHtml(a.title)}</strong></a><br/><span style="color:#b5b5b5;">${escapeHtml(a.description)}</span></li>`,
+            ),
+          ),
+        ),
+      ],
+    ),
+    schemas: [
+      ...getCommonSchemas(data),
+      {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        name: "Xini Rox Articles",
+        url: `${BASE_URL}/articles`,
+        author: { "@type": "Person", name: data.profile?.full_name || "Xini Rox" },
+        blogPost: ARTICLES.map((a) => ({
+          "@type": "BlogPosting",
+          headline: a.title,
+          url: `${BASE_URL}/articles/${a.slug}`,
+          datePublished: a.publishedAt,
+        })),
+      },
+    ],
+  };
+}
+
+function createArticlePage(article: Article, data: Awaited<ReturnType<typeof fetchSupabaseData>>): SeoPage {
+  const url = `${BASE_URL}/articles/${article.slug}`;
+  const personName = data.profile?.full_name || "Xini Rox";
+
+  const bodySections = article.sections
+    .map(
+      (s) =>
+        `<section><h2 style="margin:0 0 10px;font-size:1.4rem;font-family:'Playfair Display',serif;color:#f1d38d;">${escapeHtml(
+          s.heading,
+        )}</h2>${s.paragraphs
+          .map((p) => `<p style="margin:0 0 12px;color:#e7e7e7;">${escapeHtml(p)}</p>`)
+          .join("")}</section>`,
+    )
+    .join("");
+
+  const faqSection = article.faqs.length
+    ? `<section><h2 style="margin:24px 0 10px;font-size:1.4rem;font-family:'Playfair Display',serif;color:#f1d38d;">Frequently Asked Questions</h2>${article.faqs
+        .map(
+          (f) =>
+            `<div style="margin-bottom:14px;"><h3 style="margin:0 0 4px;color:#f4d57b;">${escapeHtml(
+              f.q,
+            )}</h3><p style="margin:0;color:#d7d7d7;">${escapeHtml(f.a)}</p></div>`,
+        )
+        .join("")}</section>`
+    : "";
+
+  const related = ARTICLES.filter((a) => a.slug !== article.slug)
+    .map((a) => `<li><a href="/articles/${a.slug}" style="color:#f4d57b;">${escapeHtml(a.title)}</a></li>`)
+    .join("");
+
+  return {
+    title: `${article.title} | Xini Rox`,
+    description: article.description,
+    canonical: url,
+    body: renderShell("Article", article.title, article.description, [
+      renderCard("Article", bodySections + faqSection),
+      renderCard(
+        "Continue Exploring",
+        `<ul style="margin:0;padding-left:1.2rem;color:#e7e7e7;display:grid;gap:.55rem;">
+           <li><a href="/about" style="color:#f4d57b;">About ${escapeHtml(personName)}</a></li>
+           <li><a href="/websites" style="color:#f4d57b;">All Websites</a></li>
+           <li><a href="/network" style="color:#f4d57b;">Full Network Directory</a></li>
+         </ul>
+         <h3 style="margin:18px 0 8px;color:#f4d57b;">Related Articles</h3>
+         <ul style="margin:0;padding-left:1.2rem;color:#e7e7e7;display:grid;gap:.45rem;">${related}</ul>`,
+      ),
+    ]),
+    schemas: [
+      ...getCommonSchemas(data),
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: article.title,
+        description: article.description,
+        url,
+        datePublished: article.publishedAt,
+        dateModified: article.publishedAt,
+        keywords: article.keywords.join(", "),
+        author: { "@type": "Person", name: personName, url: `${BASE_URL}/about` },
+        publisher: {
+          "@type": "Organization",
+          name: "Xini Rox Super Hub",
+          url: BASE_URL,
+        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Articles", item: `${BASE_URL}/articles` },
+          { "@type": "ListItem", position: 3, name: article.title, item: url },
+        ],
+      },
+      ...(article.faqs.length
+        ? [
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: article.faqs.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+          ]
+        : []),
+    ],
+  };
+}
+
 function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const urls = [
     { loc: `${BASE_URL}/`, lastmod: TODAY, priority: "1.0" },
@@ -459,6 +593,12 @@ function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
     { loc: `${BASE_URL}/social`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/network`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/articles`, lastmod: TODAY, priority: "0.9" },
+    ...ARTICLES.map((a) => ({
+      loc: `${BASE_URL}/articles/${a.slug}`,
+      lastmod: a.publishedAt,
+      priority: "0.8",
+    })),
     ...data.websites.map((site) => ({
       loc: `${BASE_URL}/site/${slugify(site.name)}`,
       lastmod: formatDate(site.updated_at),
@@ -511,6 +651,11 @@ function seoStaticPagesPlugin(): Plugin {
         writePage("social/index.html", createHomePage(data));
         writePage("about/index.html", createAboutPage(data));
         writePage("network/index.html", createNetworkPage(data));
+        writePage("articles/index.html", createArticlesIndexPage(data));
+
+        for (const article of ARTICLES) {
+          writePage(`articles/${article.slug}/index.html`, createArticlePage(article, data));
+        }
 
         for (const site of data.websites) {
           writePage(`site/${slugify(site.name)}/index.html`, createWebsitePage(site, data));
