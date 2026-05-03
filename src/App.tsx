@@ -11,6 +11,8 @@ import Network from "./pages/Network";
 import SiteDetail from "./pages/SiteDetail";
 import ProfileDetail from "./pages/ProfileDetail";
 import AdminDashboard from "./pages/AdminDashboard";
+import Articles from "./pages/Articles";
+import ArticleDetail from "./pages/ArticleDetail";
 import NotFound from "./pages/NotFound";
 import AutoSchema from "./components/AutoSchema";
 
@@ -31,6 +33,8 @@ const App = () => (
           <Route path="/network" element={<Network />} />
           <Route path="/site/:slug" element={<SiteDetail />} />
           <Route path="/profile/:slug" element={<ProfileDetail />} />
+          <Route path="/articles" element={<Articles />} />
+          <Route path="/articles/:slug" element={<ArticleDetail />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
