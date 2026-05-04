@@ -189,23 +189,50 @@ function buildPage(template: string, page: SeoPage) {
 function getCommonSchemas(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const personName = data.profile?.full_name || "Xini Rox";
   const tagline = data.profile?.tagline || "Business Manager & Digital Entrepreneur";
+  const personId = `${BASE_URL}/#person`;
+  const orgId = `${BASE_URL}/#organization`;
+  const siteId = `${BASE_URL}/#website`;
 
-  return [
+  // Single @graph that unifies Person + Organization + WebSite + every venture
+  // so Google/AI treat them as ONE connected entity, not isolated nodes.
+  const graph: Array<Record<string, unknown>> = [
     {
-      "@context": "https://schema.org",
       "@type": "Person",
+      "@id": personId,
       name: personName,
-      alternateName: "Aanand Maurya",
-      mainEntityOfPage: BASE_URL,
+      alternateName: ["Aanand Maurya", "Xini Rox", "XiniRox"],
+      url: BASE_URL,
+      mainEntityOfPage: { "@id": siteId },
       jobTitle: tagline,
+      worksFor: { "@id": orgId },
       sameAs: data.socials.map((item) => item.profile_url),
       knowsAbout: ["Business", "Digital Marketing", "Entrepreneurship", "Technology"],
+      ...(data.profile?.email ? { email: data.profile.email } : {}),
+      ...(data.profile?.contact_number ? { telephone: data.profile.contact_number } : {}),
+      ...(data.profile?.address ? { address: data.profile.address } : {}),
     },
     {
-      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": orgId,
+      name: "Xini Rox",
+      alternateName: "Xini Rox Super Hub",
+      url: BASE_URL,
+      founder: { "@id": personId },
+      employee: { "@id": personId },
+      sameAs: data.socials.map((item) => item.profile_url),
+      subOrganization: data.websites.map((site) => ({
+        "@type": "Organization",
+        name: site.name.trim(),
+        url: site.url,
+      })),
+    },
+    {
       "@type": "WebSite",
+      "@id": siteId,
       name: "Xini Rox Super Hub",
       url: BASE_URL,
+      publisher: { "@id": orgId },
+      about: { "@id": personId },
       potentialAction: {
         "@type": "SearchAction",
         target: `${BASE_URL}/network?q={search_term_string}`,
@@ -213,15 +240,27 @@ function getCommonSchemas(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
       },
     },
     ...data.websites.map((site) => ({
-      "@context": "https://schema.org",
       "@type": "Organization",
-      name: site.name,
+      "@id": `${BASE_URL}/site/${slugify(site.name)}#org`,
+      name: site.name.trim(),
       url: site.url,
-      employee: {
-        "@type": "Person",
-        name: personName,
-      },
+      parentOrganization: { "@id": orgId },
+      employee: { "@id": personId },
     })),
+    ...data.socials.map((social) => ({
+      "@type": "ProfilePage",
+      "@id": `${BASE_URL}/profile/${slugify(`${social.platform_name}-${social.owner_name}`)}#profile`,
+      name: `${social.platform_name.trim()} – ${social.owner_name.trim()}`,
+      url: social.profile_url,
+      about: { "@id": personId },
+    })),
+  ];
+
+  return [
+    {
+      "@context": "https://schema.org",
+      "@graph": graph,
+    },
   ];
 }
 
