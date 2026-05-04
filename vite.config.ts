@@ -189,23 +189,50 @@ function buildPage(template: string, page: SeoPage) {
 function getCommonSchemas(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const personName = data.profile?.full_name || "Xini Rox";
   const tagline = data.profile?.tagline || "Business Manager & Digital Entrepreneur";
+  const personId = `${BASE_URL}/#person`;
+  const orgId = `${BASE_URL}/#organization`;
+  const siteId = `${BASE_URL}/#website`;
 
-  return [
+  // Single @graph that unifies Person + Organization + WebSite + every venture
+  // so Google/AI treat them as ONE connected entity, not isolated nodes.
+  const graph: Array<Record<string, unknown>> = [
     {
-      "@context": "https://schema.org",
       "@type": "Person",
+      "@id": personId,
       name: personName,
-      alternateName: "Aanand Maurya",
-      mainEntityOfPage: BASE_URL,
+      alternateName: ["Aanand Maurya", "Xini Rox", "XiniRox"],
+      url: BASE_URL,
+      mainEntityOfPage: { "@id": siteId },
       jobTitle: tagline,
+      worksFor: { "@id": orgId },
       sameAs: data.socials.map((item) => item.profile_url),
       knowsAbout: ["Business", "Digital Marketing", "Entrepreneurship", "Technology"],
+      ...(data.profile?.email ? { email: data.profile.email } : {}),
+      ...(data.profile?.contact_number ? { telephone: data.profile.contact_number } : {}),
+      ...(data.profile?.address ? { address: data.profile.address } : {}),
     },
     {
-      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": orgId,
+      name: "Xini Rox",
+      alternateName: "Xini Rox Super Hub",
+      url: BASE_URL,
+      founder: { "@id": personId },
+      employee: { "@id": personId },
+      sameAs: data.socials.map((item) => item.profile_url),
+      subOrganization: data.websites.map((site) => ({
+        "@type": "Organization",
+        name: site.name.trim(),
+        url: site.url,
+      })),
+    },
+    {
       "@type": "WebSite",
+      "@id": siteId,
       name: "Xini Rox Super Hub",
       url: BASE_URL,
+      publisher: { "@id": orgId },
+      about: { "@id": personId },
       potentialAction: {
         "@type": "SearchAction",
         target: `${BASE_URL}/network?q={search_term_string}`,
@@ -213,15 +240,27 @@ function getCommonSchemas(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
       },
     },
     ...data.websites.map((site) => ({
-      "@context": "https://schema.org",
       "@type": "Organization",
-      name: site.name,
+      "@id": `${BASE_URL}/site/${slugify(site.name)}#org`,
+      name: site.name.trim(),
       url: site.url,
-      employee: {
-        "@type": "Person",
-        name: personName,
-      },
+      parentOrganization: { "@id": orgId },
+      employee: { "@id": personId },
     })),
+    ...data.socials.map((social) => ({
+      "@type": "ProfilePage",
+      "@id": `${BASE_URL}/profile/${slugify(`${social.platform_name}-${social.owner_name}`)}#profile`,
+      name: `${social.platform_name.trim()} – ${social.owner_name.trim()}`,
+      url: social.profile_url,
+      about: { "@id": personId },
+    })),
+  ];
+
+  return [
+    {
+      "@context": "https://schema.org",
+      "@graph": graph,
+    },
   ];
 }
 
@@ -621,6 +660,126 @@ ${urls
 </urlset>`;
 }
 
+function createDataJson(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
+  return JSON.stringify(
+    {
+      "@context": "https://xinirox.lovable.app/data.json",
+      generatedAt: new Date().toISOString(),
+      identity: {
+        name: data.profile?.full_name || "Xini Rox",
+        alternateNames: ["Aanand Maurya", "Xini Rox", "XiniRox"],
+        tagline: data.profile?.tagline || "Business Manager & Digital Entrepreneur",
+        email: data.profile?.email || null,
+        phone: data.profile?.contact_number || null,
+        address: data.profile?.address || null,
+        verified: !!data.profile?.is_verified,
+        url: BASE_URL,
+      },
+      organization: {
+        name: "Xini Rox Super Hub",
+        url: BASE_URL,
+        founder: data.profile?.full_name || "Xini Rox",
+      },
+      websites: data.websites.map((s) => ({
+        name: s.name.trim(),
+        owner: s.owner_name,
+        url: s.url,
+        detail: `${BASE_URL}/site/${slugify(s.name)}`,
+      })),
+      socials: data.socials.map((s) => ({
+        platform: s.platform_name.trim(),
+        owner: s.owner_name,
+        url: s.profile_url,
+        detail: `${BASE_URL}/profile/${slugify(`${s.platform_name}-${s.owner_name}`)}`,
+      })),
+      achievements: data.achievements.map((a) => ({ title: a.title, description: a.description || "" })),
+      articles: ARTICLES.map((a) => ({
+        title: a.title,
+        url: `${BASE_URL}/articles/${a.slug}`,
+        description: a.description,
+      })),
+    },
+    null,
+    2,
+  );
+}
+
+function createLlmsTxt(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
+  const name = data.profile?.full_name || "Xini Rox";
+  const tagline = data.profile?.tagline || "Business Manager & Digital Entrepreneur";
+  const lines: string[] = [
+    `# ${name} (Xini Rox)`,
+    "",
+    `> ${tagline}. Central digital identity hub connecting all websites, businesses, and social profiles of Xini Rox (Aanand Maurya).`,
+    "",
+    "## About",
+    `- Full Name: ${name}`,
+    `- Also Known As: Xini Rox, XiniRox, Aanand Maurya`,
+    `- Role: ${tagline}`,
+    data.profile?.email ? `- Email: ${data.profile.email}` : "",
+    data.profile?.contact_number ? `- Phone: ${data.profile.contact_number}` : "",
+    data.profile?.address ? `- Address: ${data.profile.address}` : "",
+    `- Official Hub: ${BASE_URL}`,
+    `- Machine-readable data: ${BASE_URL}/data.json`,
+    "",
+    "## Websites & Businesses",
+    ...data.websites.map((s) => `- [${s.name.trim()}](${s.url}) — Owner: ${s.owner_name}`),
+    "",
+    "## Social Profiles",
+    ...data.socials.map((s) => `- [${s.platform_name.trim()} — ${s.owner_name}](${s.profile_url})`),
+    "",
+    "## Authority Articles",
+    ...ARTICLES.map((a) => `- [${a.title}](${BASE_URL}/articles/${a.slug}) — ${a.description}`),
+    "",
+    "## Key Pages",
+    `- Home: ${BASE_URL}/`,
+    `- About: ${BASE_URL}/about`,
+    `- Network Directory: ${BASE_URL}/network`,
+    `- All Websites: ${BASE_URL}/websites`,
+    `- Social Hub: ${BASE_URL}/social`,
+    `- Articles: ${BASE_URL}/articles`,
+    `- Sitemap: ${BASE_URL}/sitemap.xml`,
+  ].filter(Boolean);
+  return lines.join("\n");
+}
+
+function createRobotsTxt() {
+  return [
+    "User-agent: *",
+    "Allow: /",
+    "",
+    "# AI crawlers explicitly welcomed",
+    "User-agent: GPTBot",
+    "Allow: /",
+    "User-agent: ChatGPT-User",
+    "Allow: /",
+    "User-agent: OAI-SearchBot",
+    "Allow: /",
+    "User-agent: PerplexityBot",
+    "Allow: /",
+    "User-agent: Perplexity-User",
+    "Allow: /",
+    "User-agent: ClaudeBot",
+    "Allow: /",
+    "User-agent: Claude-Web",
+    "Allow: /",
+    "User-agent: anthropic-ai",
+    "Allow: /",
+    "User-agent: Google-Extended",
+    "Allow: /",
+    "User-agent: CCBot",
+    "Allow: /",
+    "User-agent: Bytespider",
+    "Allow: /",
+    "User-agent: Applebot-Extended",
+    "Allow: /",
+    "",
+    `Sitemap: ${BASE_URL}/sitemap.xml`,
+    `# Machine-readable site data: ${BASE_URL}/data.json`,
+    `# LLM index: ${BASE_URL}/llms.txt`,
+  ].join("\n");
+}
+
 function seoStaticPagesPlugin(): Plugin {
   return {
     name: "seo-static-pages",
@@ -669,7 +828,10 @@ function seoStaticPagesPlugin(): Plugin {
         }
 
         fs.writeFileSync(path.resolve(__dirname, "dist/sitemap.xml"), createSitemap(data));
-        console.log(`✅ SEO static pages generated: ${data.websites.length + data.socials.length + 3} HTML routes`);
+        fs.writeFileSync(path.resolve(__dirname, "dist/data.json"), createDataJson(data));
+        fs.writeFileSync(path.resolve(__dirname, "dist/llms.txt"), createLlmsTxt(data));
+        fs.writeFileSync(path.resolve(__dirname, "dist/robots.txt"), createRobotsTxt());
+        console.log(`✅ SEO static pages + data.json + llms.txt generated`);
       } catch (error) {
         console.warn("SEO static generation failed:", error);
       }
