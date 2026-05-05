@@ -11,6 +11,13 @@ const SUPABASE_KEY =
 const BASE_URL = "https://xinirox.lovable.app";
 const TODAY = new Date().toISOString().split("T")[0];
 
+// Canonical identity assets — same image/name used everywhere for entity consistency
+const PRIMARY_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/LDyq4yi8n5RmE00lLbWgsTUw5pY2/social-images/social-1775567674370-1000093241.webp";
+const PRIMARY_LOGO = PRIMARY_IMAGE;
+const UDYAM_ID = "UDYAM-UP-32-0119444";
+const INSTAGRAM_VERIFIED = "https://www.instagram.com/xini_rox";
+const CANONICAL_NAME = "Aanand Maurya (Xini Rox)";
+
 type WebsiteRecord = {
   name: string;
   url: string;
