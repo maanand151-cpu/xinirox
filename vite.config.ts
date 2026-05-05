@@ -926,6 +926,7 @@ function createRobotsTxt() {
     "Allow: /",
     "",
     `Sitemap: ${BASE_URL}/sitemap.xml`,
+    `Sitemap: ${BASE_URL}/image-sitemap.xml`,
     `# Machine-readable site data: ${BASE_URL}/data.json`,
     `# LLM index: ${BASE_URL}/llms.txt`,
   ].join("\n");
