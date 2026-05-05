@@ -654,9 +654,116 @@ function createArticlePage(article: Article, data: Awaited<ReturnType<typeof fet
   };
 }
 
+function createIdentityPage(data: Awaited<ReturnType<typeof fetchSupabaseData>>): SeoPage {
+  const personName = data.profile?.full_name || "Aanand Maurya";
+  return {
+    title: `${CANONICAL_NAME} — Official Verified Identity & Founder Profile`,
+    description: `${CANONICAL_NAME} — verified founder of Xini Rox Super Hub. Instagram blue-tick verified, MSME Udyam registered (${UDYAM_ID}). Full biography, projects, social profiles and primary image in one canonical source.`,
+    canonical: `${BASE_URL}/about-aanand-maurya`,
+    body: renderShell(
+      "Verified Identity",
+      CANONICAL_NAME,
+      `Official source-of-truth profile for ${CANONICAL_NAME}. Verified person, verified business, full project network — all linked from this canonical page.`,
+      [
+        renderCard(
+          "Primary Image",
+          `<img src="${PRIMARY_IMAGE}" alt="${escapeHtml(CANONICAL_NAME)} — official portrait" title="${escapeHtml(CANONICAL_NAME)}" loading="eager" style="max-width:240px;border-radius:16px;border:1px solid rgba(212,175,55,.3);" />
+           <p style="margin:12px 0 0;color:#d7d7d7;">Caption: ${escapeHtml(CANONICAL_NAME)} — Founder, Xini Rox Super Hub.</p>`,
+        ),
+        renderCard(
+          "Verified Identity",
+          `<ul style="margin:0;padding-left:1.2rem;color:#e7e7e7;display:grid;gap:.55rem;">
+             <li><strong>Full Name:</strong> Aanand Maurya (also: Aanand Kumar Maurya)</li>
+             <li><strong>Public Brand:</strong> Xini Rox</li>
+             <li><strong>Instagram (Verified – Blue Tick):</strong> <a href="${INSTAGRAM_VERIFIED}" style="color:#f4d57b;">@xini_rox</a></li>
+             <li><strong>MSME Udyam Registration:</strong> ${UDYAM_ID} (Government of India)</li>
+             <li><strong>Official Hub:</strong> <a href="${BASE_URL}" style="color:#f4d57b;">${BASE_URL}</a></li>
+             <li><strong>Machine-readable data:</strong> <a href="${BASE_URL}/data.json" style="color:#f4d57b;">${BASE_URL}/data.json</a></li>
+           </ul>`,
+        ),
+        renderCard(
+          "Biography",
+          `<p style="margin:0 0 10px;color:#e7e7e7;">${escapeHtml(personName)}, professionally known as <strong>Xini Rox</strong>, is a verified digital entrepreneur, content creator and system builder from Khajni, Gorakhpur, Uttar Pradesh, India. He is the founder of <strong>Xini Rox Super Hub</strong> — a centralized digital identity network connecting 10+ ventures and 16+ social profiles.</p>
+           <p style="margin:0;color:#e7e7e7;">His identity is verified by Instagram (blue tick on @xini_rox) and his business is verified by the Government of India through MSME Udyam Registration ${UDYAM_ID}.</p>`,
+        ),
+        renderCard(
+          "All Projects in the Network",
+          renderLinkList(
+            data.websites.map(
+              (site) => `<li><strong>${escapeHtml(site.name)}</strong> — <a href="${escapeHtml(site.url)}" style="color:#f4d57b;">${escapeHtml(site.url)}</a> — <a href="/site/${slugify(site.name)}" style="color:#f4d57b;">Details</a></li>`,
+            ),
+          ),
+        ),
+        renderCard(
+          "All Verified Social Profiles",
+          renderLinkList(
+            data.socials.map(
+              (social) => `<li><strong>${escapeHtml(social.platform_name)}</strong> — <a href="${escapeHtml(social.profile_url)}" style="color:#f4d57b;">${escapeHtml(social.profile_url)}</a></li>`,
+            ),
+          ),
+        ),
+        renderCard(
+          "Authority Articles about ${CANONICAL_NAME}",
+          renderLinkList(
+            ARTICLES.map(
+              (a) => `<li><a href="/articles/${a.slug}" style="color:#f4d57b;"><strong>${escapeHtml(a.title)}</strong></a></li>`,
+            ),
+          ),
+        ),
+      ],
+    ),
+    schemas: [
+      ...getCommonSchemas(data),
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        url: `${BASE_URL}/about-aanand-maurya`,
+        name: `${CANONICAL_NAME} — Verified Identity`,
+        primaryImageOfPage: { "@id": `${BASE_URL}/#primaryimage` },
+        mainEntity: { "@id": `${BASE_URL}/#person` },
+        about: { "@id": `${BASE_URL}/#person` },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "About Aanand Maurya (Xini Rox)", item: `${BASE_URL}/about-aanand-maurya` },
+        ],
+      },
+    ],
+  };
+}
+
+function createImageSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
+  const images = [
+    {
+      page: `${BASE_URL}/about-aanand-maurya`,
+      loc: PRIMARY_IMAGE,
+      title: `${CANONICAL_NAME} — Official Portrait`,
+      caption: `${CANONICAL_NAME}, founder of Xini Rox Super Hub. Verified person, MSME Udyam ${UDYAM_ID}.`,
+    },
+    {
+      page: `${BASE_URL}/`,
+      loc: PRIMARY_LOGO,
+      title: "Xini Rox Super Hub — Logo",
+      caption: "Official logo of Xini Rox Super Hub, founded by Aanand Maurya.",
+    },
+  ];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${images
+  .map(
+    (img) => `  <url>\n    <loc>${img.page}</loc>\n    <image:image>\n      <image:loc>${img.loc}</image:loc>\n      <image:title>${escapeHtml(img.title)}</image:title>\n      <image:caption>${escapeHtml(img.caption)}</image:caption>\n    </image:image>\n  </url>`,
+  )
+  .join("\n")}
+</urlset>`;
+}
+
 function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const urls = [
     { loc: `${BASE_URL}/`, lastmod: TODAY, priority: "1.0" },
+    { loc: `${BASE_URL}/about-aanand-maurya`, lastmod: TODAY, priority: "1.0" },
     { loc: `${BASE_URL}/websites`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/social`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
