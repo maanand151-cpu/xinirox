@@ -962,6 +962,7 @@ function seoStaticPagesPlugin(): Plugin {
         writePage("about/index.html", createAboutPage(data));
         writePage("network/index.html", createNetworkPage(data));
         writePage("articles/index.html", createArticlesIndexPage(data));
+        writePage("about-aanand-maurya/index.html", createIdentityPage(data));
 
         for (const article of ARTICLES) {
           writePage(`articles/${article.slug}/index.html`, createArticlePage(article, data));
@@ -979,10 +980,11 @@ function seoStaticPagesPlugin(): Plugin {
         }
 
         fs.writeFileSync(path.resolve(__dirname, "dist/sitemap.xml"), createSitemap(data));
+        fs.writeFileSync(path.resolve(__dirname, "dist/image-sitemap.xml"), createImageSitemap(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/data.json"), createDataJson(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/llms.txt"), createLlmsTxt(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/robots.txt"), createRobotsTxt());
-        console.log(`✅ SEO static pages + data.json + llms.txt generated`);
+        console.log(`✅ SEO static pages + identity + image-sitemap + data.json + llms.txt generated`);
       } catch (error) {
         console.warn("SEO static generation failed:", error);
       }
