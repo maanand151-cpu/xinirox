@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import WebsitesPage from "./pages/WebsitesPage";
 import SocialPage from "./pages/SocialPage";
 import AboutUs from "./pages/AboutUs";
+import AboutAanandMaurya from "./pages/AboutAanandMaurya";
 import Network from "./pages/Network";
 import SiteDetail from "./pages/SiteDetail";
 import ProfileDetail from "./pages/ProfileDetail";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/websites" element={<WebsitesPage />} />
           <Route path="/social" element={<SocialPage />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/about-aanand-maurya" element={<AboutAanandMaurya />} />
           <Route path="/network" element={<Network />} />
           <Route path="/site/:slug" element={<SiteDetail />} />
           <Route path="/profile/:slug" element={<ProfileDetail />} />
