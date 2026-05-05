@@ -26,6 +26,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AutoSchema />
+        <InstallPromptModal />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/websites" element={<WebsitesPage />} />
