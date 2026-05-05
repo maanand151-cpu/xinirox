@@ -16,6 +16,7 @@ import Articles from "./pages/Articles";
 import ArticleDetail from "./pages/ArticleDetail";
 import NotFound from "./pages/NotFound";
 import AutoSchema from "./components/AutoSchema";
+import InstallPromptModal from "./components/InstallPromptModal";
 
 const queryClient = new QueryClient();
 
