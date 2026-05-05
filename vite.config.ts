@@ -801,22 +801,31 @@ function createDataJson(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
     {
       "@context": "https://xinirox.lovable.app/data.json",
       generatedAt: new Date().toISOString(),
-      identity: {
-        name: data.profile?.full_name || "Xini Rox",
-        alternateNames: ["Aanand Maurya", "Xini Rox", "XiniRox"],
-        tagline: data.profile?.tagline || "Business Manager & Digital Entrepreneur",
+      person: {
+        name: "Aanand Maurya",
+        canonicalName: CANONICAL_NAME,
+        alias: ["Xini Rox", "XiniRox", "Aanand Kumar Maurya"],
+        image: PRIMARY_IMAGE,
+        verified: true,
+        verification: {
+          instagram: { handle: "@xini_rox", url: INSTAGRAM_VERIFIED, blueTick: true },
+          udyam: { id: UDYAM_ID, issuer: "Ministry of MSME, Government of India" },
+        },
+        sameAs: Array.from(new Set([INSTAGRAM_VERIFIED, ...data.socials.map((s) => s.profile_url)])),
+        identityPage: `${BASE_URL}/about-aanand-maurya`,
         email: data.profile?.email || null,
         phone: data.profile?.contact_number || null,
         address: data.profile?.address || null,
-        verified: !!data.profile?.is_verified,
-        url: BASE_URL,
       },
-      organization: {
-        name: "Xini Rox Super Hub",
+      brand: {
+        name: "Xini Rox",
+        type: "Digital Ecosystem",
         url: BASE_URL,
-        founder: data.profile?.full_name || "Xini Rox",
+        logo: PRIMARY_LOGO,
+        founder: "Aanand Maurya",
+        registration: UDYAM_ID,
       },
-      websites: data.websites.map((s) => ({
+      projects: data.websites.map((s) => ({
         name: s.name.trim(),
         owner: s.owner_name,
         url: s.url,
@@ -834,6 +843,12 @@ function createDataJson(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
         url: `${BASE_URL}/articles/${a.slug}`,
         description: a.description,
       })),
+      endpoints: {
+        sitemap: `${BASE_URL}/sitemap.xml`,
+        imageSitemap: `${BASE_URL}/image-sitemap.xml`,
+        llms: `${BASE_URL}/llms.txt`,
+        data: `${BASE_URL}/data.json`,
+      },
     },
     null,
     2,
