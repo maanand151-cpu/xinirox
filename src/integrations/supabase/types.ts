@@ -107,6 +107,45 @@ export type Database = {
         }
         Relationships: []
       }
+      media_assets: {
+        Row: {
+          alt: string
+          content_type: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          slug: string
+          storage_path: string
+          supabase_url: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alt?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          slug: string
+          storage_path: string
+          supabase_url: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          alt?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          slug?: string
+          storage_path?: string
+          supabase_url?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       social_media: {
         Row: {
           created_at: string
