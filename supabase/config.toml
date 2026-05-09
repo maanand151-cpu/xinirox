@@ -1,1 +1,7 @@
 project_id = "lswynjfkkutmttcqoaqo"
+
+[functions.media-proxy]
+verify_jwt = false
+
+[functions.media-upload]
+verify_jwt = false
