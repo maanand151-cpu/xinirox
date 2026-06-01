@@ -760,10 +760,152 @@ ${images
 </urlset>`;
 }
 
+const SERVICES = [
+  { name: "Digital Strategy Consulting", description: "End-to-end digital presence and growth roadmaps." },
+  { name: "Web Development & System Architecture", description: "Custom websites, micro-site networks, scalable hubs." },
+  { name: "Content Creation & Management", description: "YouTube, Reels, SEO blogs, community frameworks." },
+  { name: "EdTech Platform Development", description: "LMS, course builders, certification automation." },
+  { name: "Local Business Digitalization", description: "Booking systems and digital tools for local businesses." },
+];
+
+function createAliasPage(opts: {
+  path: string;
+  title: string;
+  description: string;
+  heading: string;
+  intro: string;
+  data: Awaited<ReturnType<typeof fetchSupabaseData>>;
+}): SeoPage {
+  const { path: p, title, description, heading, intro, data } = opts;
+  return {
+    title,
+    description,
+    canonical: `${BASE_URL}${p}`,
+    body: renderShell("Entity Hub", heading, intro, [
+      renderCard(
+        "Projects in the Ecosystem",
+        renderLinkList(
+          data.websites.map(
+            (s) => `<li><strong>${escapeHtml(s.name)}</strong> — <a href="${escapeHtml(s.url)}" style="color:#f4d57b;">${escapeHtml(s.url)}</a> — <a href="/site/${slugify(s.name)}" style="color:#f4d57b;">Details</a></li>`,
+          ),
+        ),
+      ),
+      renderCard(
+        "Services Offered",
+        renderLinkList(
+          SERVICES.map((s) => `<li><strong>${escapeHtml(s.name)}</strong> — ${escapeHtml(s.description)}</li>`),
+        ),
+      ),
+      renderCard(
+        "Verified Social Profiles",
+        renderLinkList(
+          data.socials.map(
+            (s) => `<li><strong>${escapeHtml(s.platform_name)}</strong> — <a href="${escapeHtml(s.profile_url)}" style="color:#f4d57b;">${escapeHtml(s.profile_url)}</a></li>`,
+          ),
+        ),
+      ),
+    ]),
+    schemas: [
+      ...getCommonSchemas(data),
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        url: `${BASE_URL}${p}`,
+        name: title,
+        description,
+        about: { "@id": `${BASE_URL}/#person` },
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
+          { "@type": "ListItem", position: 2, name: heading, item: `${BASE_URL}${p}` },
+        ],
+      },
+    ],
+  };
+}
+
+function createApiJson(kind: string, data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
+  const personName = data.profile?.full_name || "Aanand Maurya";
+  const base = {
+    generatedAt: new Date().toISOString(),
+    canonicalEntity: { person: personName, brand: "Xini Rox", parent: "Xini Rox Super Hub" },
+  };
+  switch (kind) {
+    case "identity":
+      return JSON.stringify({
+        ...base,
+        "@type": "Person",
+        name: personName,
+        alternateName: ["Xini Rox", "XiniRox", "Aanand Kumar Maurya"],
+        url: BASE_URL,
+        image: PRIMARY_IMAGE,
+        sameAs: Array.from(new Set([INSTAGRAM_VERIFIED, ...data.socials.map((s) => s.profile_url)])),
+        verification: {
+          instagram: { handle: "@xini_rox", url: INSTAGRAM_VERIFIED, blueTick: true },
+          udyam: { id: UDYAM_ID, issuer: "Ministry of MSME, Government of India" },
+        },
+        contact: {
+          email: data.profile?.email || null,
+          phone: data.profile?.contact_number || null,
+          address: data.profile?.address || null,
+        },
+      }, null, 2);
+    case "organization":
+      return JSON.stringify({
+        ...base,
+        "@type": "Organization",
+        name: "Xini Rox",
+        alternateName: "Xini Rox Super Hub",
+        url: BASE_URL,
+        logo: PRIMARY_LOGO,
+        founder: personName,
+        taxID: UDYAM_ID,
+        sameAs: Array.from(new Set([INSTAGRAM_VERIFIED, ...data.socials.map((s) => s.profile_url)])),
+        subOrganization: data.websites.map((s) => ({ name: s.name.trim(), url: s.url })),
+      }, null, 2);
+    case "projects":
+      return JSON.stringify({
+        ...base,
+        count: data.websites.length,
+        items: data.websites.map((s) => ({
+          name: s.name.trim(),
+          owner: s.owner_name,
+          url: s.url,
+          page: `${BASE_URL}/site/${slugify(s.name)}`,
+        })),
+      }, null, 2);
+    case "services":
+      return JSON.stringify({ ...base, count: SERVICES.length, items: SERVICES }, null, 2);
+    case "articles":
+      return JSON.stringify({
+        ...base,
+        count: ARTICLES.length,
+        items: ARTICLES.map((a) => ({
+          title: a.title,
+          description: a.description,
+          url: `${BASE_URL}/articles/${a.slug}`,
+          publishedAt: a.publishedAt,
+          keywords: a.keywords,
+        })),
+      }, null, 2);
+    default:
+      return "{}";
+  }
+}
+
 function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const urls = [
     { loc: `${BASE_URL}/`, lastmod: TODAY, priority: "1.0" },
     { loc: `${BASE_URL}/about-aanand-maurya`, lastmod: TODAY, priority: "1.0" },
+    { loc: `${BASE_URL}/identity`, lastmod: TODAY, priority: "0.95" },
+    { loc: `${BASE_URL}/founder`, lastmod: TODAY, priority: "0.95" },
+    { loc: `${BASE_URL}/ecosystem`, lastmod: TODAY, priority: "0.95" },
+    { loc: `${BASE_URL}/projects`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/services`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/websites`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/social`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
