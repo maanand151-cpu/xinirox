@@ -1107,6 +1107,13 @@ function seoStaticPagesPlugin(): Plugin {
         writePage("articles/index.html", createArticlesIndexPage(data));
         writePage("about-aanand-maurya/index.html", createIdentityPage(data));
 
+        // Entity-authority alias pages — every canonical role gets a discoverable URL
+        writePage("identity/index.html", createAliasPage({ path: "/identity", title: "Identity Hub — Aanand Maurya (Xini Rox) & Xini Rox Super Hub", description: "Canonical machine-readable identity hub for Aanand Maurya (Xini Rox) and Xini Rox Super Hub — verified person, organization, projects, and services.", heading: "Xini Rox Identity Hub", intro: "Single source of truth for the Aanand Maurya / Xini Rox / Xini Rox Super Hub entity graph.", data }));
+        writePage("founder/index.html", createAliasPage({ path: "/founder", title: "Founder — Aanand Maurya (Xini Rox), Xini Rox Super Hub", description: "Aanand Maurya (Xini Rox) is the founder of Xini Rox Super Hub. Verified by Instagram blue tick and MSME Udyam registration.", heading: "Founder: Aanand Maurya (Xini Rox)", intro: "Verified founder of Xini Rox Super Hub — digital entrepreneur, system builder, content creator.", data }));
+        writePage("ecosystem/index.html", createAliasPage({ path: "/ecosystem", title: "Xini Rox Ecosystem — Connected Projects, Brands & Profiles", description: "The full Xini Rox ecosystem: connected projects, brands, websites, and verified social profiles under Xini Rox Super Hub.", heading: "Xini Rox Ecosystem", intro: "A connected network of websites, businesses, and social properties under the Xini Rox Super Hub.", data }));
+        writePage("projects/index.html", createAliasPage({ path: "/projects", title: "Projects — Xini Rox Super Hub Network", description: "All projects, websites, and ventures inside the Xini Rox Super Hub network founded by Aanand Maurya.", heading: "Xini Rox Projects", intro: "Every project and venture inside the Xini Rox Super Hub network.", data }));
+        writePage("services/index.html", createAliasPage({ path: "/services", title: "Services — Xini Rox Super Hub by Aanand Maurya", description: "Services offered by Xini Rox Super Hub: digital strategy, web development, content, EdTech, and local business digitalization.", heading: "Xini Rox Services", intro: "Professional services provided by Aanand Maurya through Xini Rox Super Hub.", data }));
+
         for (const article of ARTICLES) {
           writePage(`articles/${article.slug}/index.html`, createArticlePage(article, data));
         }
@@ -1122,12 +1129,19 @@ function seoStaticPagesPlugin(): Plugin {
           );
         }
 
+        // Public machine-readable JSON APIs
+        const apiDir = path.resolve(__dirname, "dist/api");
+        fs.mkdirSync(apiDir, { recursive: true });
+        for (const kind of ["identity", "organization", "projects", "services", "articles"]) {
+          fs.writeFileSync(path.resolve(apiDir, `${kind}.json`), createApiJson(kind, data));
+        }
+
         fs.writeFileSync(path.resolve(__dirname, "dist/sitemap.xml"), createSitemap(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/image-sitemap.xml"), createImageSitemap(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/data.json"), createDataJson(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/llms.txt"), createLlmsTxt(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/robots.txt"), createRobotsTxt());
-        console.log(`✅ SEO static pages + identity + image-sitemap + data.json + llms.txt generated`);
+        console.log(`✅ SEO static pages + entity aliases + JSON APIs + sitemaps + llms.txt generated`);
       } catch (error) {
         console.warn("SEO static generation failed:", error);
       }
