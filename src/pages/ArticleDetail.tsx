@@ -16,7 +16,7 @@ const ArticleDetail = () => {
 
   return (
     <AppShell>
-      <SeoHead title={`${article.title} | Xini Rox`} description={article.description} canonical={canonical} />
+      <SeoHead title={`${article.title} | Xini Rox`} description={article.description} canonical={canonical} ogType="article" />
 
       <article className="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
         <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground mb-6 flex items-center gap-2">
