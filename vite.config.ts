@@ -760,10 +760,152 @@ ${images
 </urlset>`;
 }
 
+const SERVICES = [
+  { name: "Digital Strategy Consulting", description: "End-to-end digital presence and growth roadmaps." },
+  { name: "Web Development & System Architecture", description: "Custom websites, micro-site networks, scalable hubs." },
+  { name: "Content Creation & Management", description: "YouTube, Reels, SEO blogs, community frameworks." },
+  { name: "EdTech Platform Development", description: "LMS, course builders, certification automation." },
+  { name: "Local Business Digitalization", description: "Booking systems and digital tools for local businesses." },
+];
+
+function createAliasPage(opts: {
+  path: string;
+  title: string;
+  description: string;
+  heading: string;
+  intro: string;
+  data: Awaited<ReturnType<typeof fetchSupabaseData>>;
+}): SeoPage {
+  const { path: p, title, description, heading, intro, data } = opts;
+  return {
+    title,
+    description,
+    canonical: `${BASE_URL}${p}`,
+    body: renderShell("Entity Hub", heading, intro, [
+      renderCard(
+        "Projects in the Ecosystem",
+        renderLinkList(
+          data.websites.map(
+            (s) => `<li><strong>${escapeHtml(s.name)}</strong> — <a href="${escapeHtml(s.url)}" style="color:#f4d57b;">${escapeHtml(s.url)}</a> — <a href="/site/${slugify(s.name)}" style="color:#f4d57b;">Details</a></li>`,
+          ),
+        ),
+      ),
+      renderCard(
+        "Services Offered",
+        renderLinkList(
+          SERVICES.map((s) => `<li><strong>${escapeHtml(s.name)}</strong> — ${escapeHtml(s.description)}</li>`),
+        ),
+      ),
+      renderCard(
+        "Verified Social Profiles",
+        renderLinkList(
+          data.socials.map(
+            (s) => `<li><strong>${escapeHtml(s.platform_name)}</strong> — <a href="${escapeHtml(s.profile_url)}" style="color:#f4d57b;">${escapeHtml(s.profile_url)}</a></li>`,
+          ),
+        ),
+      ),
+    ]),
+    schemas: [
+      ...getCommonSchemas(data),
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        url: `${BASE_URL}${p}`,
+        name: title,
+        description,
+        about: { "@id": `${BASE_URL}/#person` },
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
+          { "@type": "ListItem", position: 2, name: heading, item: `${BASE_URL}${p}` },
+        ],
+      },
+    ],
+  };
+}
+
+function createApiJson(kind: string, data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
+  const personName = data.profile?.full_name || "Aanand Maurya";
+  const base = {
+    generatedAt: new Date().toISOString(),
+    canonicalEntity: { person: personName, brand: "Xini Rox", parent: "Xini Rox Super Hub" },
+  };
+  switch (kind) {
+    case "identity":
+      return JSON.stringify({
+        ...base,
+        "@type": "Person",
+        name: personName,
+        alternateName: ["Xini Rox", "XiniRox", "Aanand Kumar Maurya"],
+        url: BASE_URL,
+        image: PRIMARY_IMAGE,
+        sameAs: Array.from(new Set([INSTAGRAM_VERIFIED, ...data.socials.map((s) => s.profile_url)])),
+        verification: {
+          instagram: { handle: "@xini_rox", url: INSTAGRAM_VERIFIED, blueTick: true },
+          udyam: { id: UDYAM_ID, issuer: "Ministry of MSME, Government of India" },
+        },
+        contact: {
+          email: data.profile?.email || null,
+          phone: data.profile?.contact_number || null,
+          address: data.profile?.address || null,
+        },
+      }, null, 2);
+    case "organization":
+      return JSON.stringify({
+        ...base,
+        "@type": "Organization",
+        name: "Xini Rox",
+        alternateName: "Xini Rox Super Hub",
+        url: BASE_URL,
+        logo: PRIMARY_LOGO,
+        founder: personName,
+        taxID: UDYAM_ID,
+        sameAs: Array.from(new Set([INSTAGRAM_VERIFIED, ...data.socials.map((s) => s.profile_url)])),
+        subOrganization: data.websites.map((s) => ({ name: s.name.trim(), url: s.url })),
+      }, null, 2);
+    case "projects":
+      return JSON.stringify({
+        ...base,
+        count: data.websites.length,
+        items: data.websites.map((s) => ({
+          name: s.name.trim(),
+          owner: s.owner_name,
+          url: s.url,
+          page: `${BASE_URL}/site/${slugify(s.name)}`,
+        })),
+      }, null, 2);
+    case "services":
+      return JSON.stringify({ ...base, count: SERVICES.length, items: SERVICES }, null, 2);
+    case "articles":
+      return JSON.stringify({
+        ...base,
+        count: ARTICLES.length,
+        items: ARTICLES.map((a) => ({
+          title: a.title,
+          description: a.description,
+          url: `${BASE_URL}/articles/${a.slug}`,
+          publishedAt: a.publishedAt,
+          keywords: a.keywords,
+        })),
+      }, null, 2);
+    default:
+      return "{}";
+  }
+}
+
 function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   const urls = [
     { loc: `${BASE_URL}/`, lastmod: TODAY, priority: "1.0" },
     { loc: `${BASE_URL}/about-aanand-maurya`, lastmod: TODAY, priority: "1.0" },
+    { loc: `${BASE_URL}/identity`, lastmod: TODAY, priority: "0.95" },
+    { loc: `${BASE_URL}/founder`, lastmod: TODAY, priority: "0.95" },
+    { loc: `${BASE_URL}/ecosystem`, lastmod: TODAY, priority: "0.95" },
+    { loc: `${BASE_URL}/projects`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/services`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/websites`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/social`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
@@ -965,6 +1107,13 @@ function seoStaticPagesPlugin(): Plugin {
         writePage("articles/index.html", createArticlesIndexPage(data));
         writePage("about-aanand-maurya/index.html", createIdentityPage(data));
 
+        // Entity-authority alias pages — every canonical role gets a discoverable URL
+        writePage("identity/index.html", createAliasPage({ path: "/identity", title: "Identity Hub — Aanand Maurya (Xini Rox) & Xini Rox Super Hub", description: "Canonical machine-readable identity hub for Aanand Maurya (Xini Rox) and Xini Rox Super Hub — verified person, organization, projects, and services.", heading: "Xini Rox Identity Hub", intro: "Single source of truth for the Aanand Maurya / Xini Rox / Xini Rox Super Hub entity graph.", data }));
+        writePage("founder/index.html", createAliasPage({ path: "/founder", title: "Founder — Aanand Maurya (Xini Rox), Xini Rox Super Hub", description: "Aanand Maurya (Xini Rox) is the founder of Xini Rox Super Hub. Verified by Instagram blue tick and MSME Udyam registration.", heading: "Founder: Aanand Maurya (Xini Rox)", intro: "Verified founder of Xini Rox Super Hub — digital entrepreneur, system builder, content creator.", data }));
+        writePage("ecosystem/index.html", createAliasPage({ path: "/ecosystem", title: "Xini Rox Ecosystem — Connected Projects, Brands & Profiles", description: "The full Xini Rox ecosystem: connected projects, brands, websites, and verified social profiles under Xini Rox Super Hub.", heading: "Xini Rox Ecosystem", intro: "A connected network of websites, businesses, and social properties under the Xini Rox Super Hub.", data }));
+        writePage("projects/index.html", createAliasPage({ path: "/projects", title: "Projects — Xini Rox Super Hub Network", description: "All projects, websites, and ventures inside the Xini Rox Super Hub network founded by Aanand Maurya.", heading: "Xini Rox Projects", intro: "Every project and venture inside the Xini Rox Super Hub network.", data }));
+        writePage("services/index.html", createAliasPage({ path: "/services", title: "Services — Xini Rox Super Hub by Aanand Maurya", description: "Services offered by Xini Rox Super Hub: digital strategy, web development, content, EdTech, and local business digitalization.", heading: "Xini Rox Services", intro: "Professional services provided by Aanand Maurya through Xini Rox Super Hub.", data }));
+
         for (const article of ARTICLES) {
           writePage(`articles/${article.slug}/index.html`, createArticlePage(article, data));
         }
@@ -980,12 +1129,19 @@ function seoStaticPagesPlugin(): Plugin {
           );
         }
 
+        // Public machine-readable JSON APIs
+        const apiDir = path.resolve(__dirname, "dist/api");
+        fs.mkdirSync(apiDir, { recursive: true });
+        for (const kind of ["identity", "organization", "projects", "services", "articles"]) {
+          fs.writeFileSync(path.resolve(apiDir, `${kind}.json`), createApiJson(kind, data));
+        }
+
         fs.writeFileSync(path.resolve(__dirname, "dist/sitemap.xml"), createSitemap(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/image-sitemap.xml"), createImageSitemap(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/data.json"), createDataJson(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/llms.txt"), createLlmsTxt(data));
         fs.writeFileSync(path.resolve(__dirname, "dist/robots.txt"), createRobotsTxt());
-        console.log(`✅ SEO static pages + identity + image-sitemap + data.json + llms.txt generated`);
+        console.log(`✅ SEO static pages + entity aliases + JSON APIs + sitemaps + llms.txt generated`);
       } catch (error) {
         console.warn("SEO static generation failed:", error);
       }
