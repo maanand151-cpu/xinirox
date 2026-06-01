@@ -100,7 +100,8 @@ Deno.serve(async (req) => {
       }, { onConflict: "slug" });
 
     if (dbErr) {
-      return new Response(JSON.stringify({ error: "DB error: " + dbErr.message }), {
+      console.error("media-upload DB error:", dbErr);
+      return new Response(JSON.stringify({ error: "A database error occurred. Please try again." }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
