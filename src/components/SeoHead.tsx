@@ -4,9 +4,10 @@ interface SeoHeadProps {
   title: string;
   description: string;
   canonical?: string;
+  ogType?: string;
 }
 
-const SeoHead = ({ title, description, canonical }: SeoHeadProps) => {
+const SeoHead = ({ title, description, canonical, ogType = "website" }: SeoHeadProps) => {
   useEffect(() => {
     document.title = title;
 
@@ -25,7 +26,7 @@ const SeoHead = ({ title, description, canonical }: SeoHeadProps) => {
     setMeta("robots", "index, follow");
     setMeta("og:title", title, true);
     setMeta("og:description", description, true);
-    setMeta("og:type", "website", true);
+    setMeta("og:type", ogType, true);
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
 
@@ -43,7 +44,7 @@ const SeoHead = ({ title, description, canonical }: SeoHeadProps) => {
     return () => {
       document.title = "Xini Rox – Business Manager & Entrepreneur";
     };
-  }, [title, description, canonical]);
+  }, [title, description, canonical, ogType]);
 
   return null;
 };
