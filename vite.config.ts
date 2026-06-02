@@ -911,6 +911,10 @@ function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/network`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/articles`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/knowledge`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/entity`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/brand`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/founder-story`, lastmod: TODAY, priority: "0.9" },
     ...ARTICLES.map((a) => ({
       loc: `${BASE_URL}/articles/${a.slug}`,
       lastmod: a.publishedAt,
