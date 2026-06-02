@@ -31,7 +31,7 @@ const Network = () => {
       <SeoHead
         title="Xini Rox Network – All Websites & Social Profiles"
         description="Complete directory of all websites, businesses, and social media profiles connected to Xini Rox."
-        canonical="https://xinirox.lovable.app/network"
+        canonical="https://xinirox.co.in/network"
       />
       <JsonLdSchema websites={websites} socials={socials} />
 

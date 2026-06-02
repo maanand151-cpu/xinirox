@@ -19,7 +19,7 @@ const SocialPage = () => {
       <SeoHead
         title="Social Media – Xini Rox Super Hub"
         description="All social media profiles and platforms connected to Xini Rox."
-        canonical="https://xinirox.lovable.app/social"
+        canonical="https://xinirox.co.in/social"
       />
       <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gradient-gold mb-2">Social Media</h1>

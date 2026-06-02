@@ -12,7 +12,7 @@ import {
 const SITE_URL =
   typeof window !== "undefined" && window.location.hostname !== "localhost"
     ? `${window.location.protocol}//${window.location.hostname}`
-    : "https://xinirox.lovable.app";
+    : "https://xinirox.co.in";
 const BRAND = "Xini Rox Super Hub";
 
 /**

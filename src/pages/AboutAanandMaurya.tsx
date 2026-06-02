@@ -34,7 +34,7 @@ const AboutAanandMaurya = () => {
       <SeoHead
         title={`${CANONICAL} — Official Verified Identity & Founder Profile`}
         description={`${CANONICAL} — verified founder of Xini Rox Super Hub. Instagram blue-tick verified, MSME Udyam registered (${UDYAM_ID}). Canonical source-of-truth identity page.`}
-        canonical="https://xinirox.lovable.app/about-aanand-maurya"
+        canonical="https://xinirox.co.in/about-aanand-maurya"
       />
 
       <article className="max-w-4xl mx-auto px-4 py-10 animate-fade-in">

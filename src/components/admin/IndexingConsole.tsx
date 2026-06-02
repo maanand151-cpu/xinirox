@@ -14,7 +14,7 @@ interface IndexingConsoleProps {
   socials: SocialMedia[];
 }
 
-const BASE = "https://xinirox.lovable.app";
+const BASE = "https://xinirox.co.in";
 const SITEMAP_URL = `${BASE}/sitemap.xml`;
 
 const IndexingConsole = ({ websites, socials }: IndexingConsoleProps) => {

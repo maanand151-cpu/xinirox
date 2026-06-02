@@ -8,7 +8,7 @@ import { ARTICLES, type Article } from "./src/content/articles";
 const SUPABASE_URL = "https://lswynjfkkutmttcqoaqo.supabase.co";
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzd3luamZra3V0bXR0Y3FvYXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NjMxNTEsImV4cCI6MjA5MTEzOTE1MX0.-mtmNwAMM-G_qyvJpXqkMxwa6KEvd5AelhA10J2vNnQ";
-const BASE_URL = "https://xinirox.lovable.app";
+const BASE_URL = "https://xinirox.co.in";
 const TODAY = new Date().toISOString().split("T")[0];
 
 // Canonical identity assets — same image/name used everywhere for entity consistency
@@ -911,6 +911,10 @@ function createSitemap(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
     { loc: `${BASE_URL}/about`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/network`, lastmod: TODAY, priority: "0.9" },
     { loc: `${BASE_URL}/articles`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/knowledge`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/entity`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/brand`, lastmod: TODAY, priority: "0.9" },
+    { loc: `${BASE_URL}/founder-story`, lastmod: TODAY, priority: "0.9" },
     ...ARTICLES.map((a) => ({
       loc: `${BASE_URL}/articles/${a.slug}`,
       lastmod: a.publishedAt,
@@ -941,7 +945,7 @@ ${urls
 function createDataJson(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   return JSON.stringify(
     {
-      "@context": "https://xinirox.lovable.app/data.json",
+      "@context": "https://xinirox.co.in/data.json",
       generatedAt: new Date().toISOString(),
       person: {
         name: "Aanand Maurya",
@@ -1113,6 +1117,10 @@ function seoStaticPagesPlugin(): Plugin {
         writePage("ecosystem/index.html", createAliasPage({ path: "/ecosystem", title: "Xini Rox Ecosystem — Connected Projects, Brands & Profiles", description: "The full Xini Rox ecosystem: connected projects, brands, websites, and verified social profiles under Xini Rox Super Hub.", heading: "Xini Rox Ecosystem", intro: "A connected network of websites, businesses, and social properties under the Xini Rox Super Hub.", data }));
         writePage("projects/index.html", createAliasPage({ path: "/projects", title: "Projects — Xini Rox Super Hub Network", description: "All projects, websites, and ventures inside the Xini Rox Super Hub network founded by Aanand Maurya.", heading: "Xini Rox Projects", intro: "Every project and venture inside the Xini Rox Super Hub network.", data }));
         writePage("services/index.html", createAliasPage({ path: "/services", title: "Services — Xini Rox Super Hub by Aanand Maurya", description: "Services offered by Xini Rox Super Hub: digital strategy, web development, content, EdTech, and local business digitalization.", heading: "Xini Rox Services", intro: "Professional services provided by Aanand Maurya through Xini Rox Super Hub.", data }));
+        writePage("knowledge/index.html", createAliasPage({ path: "/knowledge", title: "Knowledge Hub — Xini Rox Entity Graph", description: "Machine-readable knowledge graph for the Xini Rox brand, founder Aanand Maurya, organization, projects, and verified network.", heading: "Xini Rox Knowledge Hub", intro: "A semantic knowledge hub describing the Xini Rox entity for AI retrieval systems and search engines.", data }));
+        writePage("entity/index.html", createAliasPage({ path: "/entity", title: "Entity — Xini Rox (Aanand Maurya)", description: "Canonical entity reference for Xini Rox / Aanand Maurya / Xini Rox Super Hub used by knowledge graphs and AI assistants.", heading: "Xini Rox as a Recognized Internet Entity", intro: "Canonical entity reference for AI systems and search engines.", data }));
+        writePage("brand/index.html", createAliasPage({ path: "/brand", title: "Brand — Xini Rox Super Hub", description: "The official brand definition of Xini Rox Super Hub — the digital ecosystem of Aanand Maurya.", heading: "The Xini Rox Brand", intro: "Official brand definition and visual identity of Xini Rox Super Hub.", data }));
+        writePage("founder-story/index.html", createAliasPage({ path: "/founder-story", title: "Founder Story — Aanand Maurya (Xini Rox)", description: "The founder narrative behind Xini Rox Super Hub — Aanand Maurya, digital entrepreneur from Gorakhpur, India.", heading: "Founder Story: Aanand Maurya", intro: "The story behind Xini Rox Super Hub and its founder.", data }));
 
         for (const article of ARTICLES) {
           writePage(`articles/${article.slug}/index.html`, createArticlePage(article, data));

@@ -31,7 +31,7 @@ export interface SchemaService {
 }
 
 export interface SchemaInput {
-  siteUrl: string;          // e.g. https://xinirox.lovable.app
+  siteUrl: string;          // e.g. https://xinirox.co.in
   brand: string;            // e.g. Xini Rox Super Hub
   profile: SchemaProfile | null;
   websites: SchemaWebsite[];
