@@ -12,6 +12,8 @@ const Footer = () => {
           <Link to="/social" className="hover:text-primary">Social</Link>
           <Link to="/network" className="hover:text-primary">Network</Link>
           <Link to="/articles" className="hover:text-primary">Articles</Link>
+          <Link to="/knowledge" className="hover:text-primary">Knowledge</Link>
+          <Link to="/founder-story" className="hover:text-primary">Founder Story</Link>
         </nav>
         <p className="text-[11px] text-muted-foreground/70 max-w-md mx-auto">
           Xini Rox (Aanand Maurya) — Digital entrepreneur from Gorakhpur, India. Founder of Xini Rox Super Hub.
