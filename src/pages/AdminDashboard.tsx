@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, X, Globe, Share2, User } from "lucide-react";
-import WebsiteForm from "@/components/admin/WebsiteForm";
+import WebsiteForm, { type WebsiteFormData } from "@/components/admin/WebsiteForm";
 import SocialMediaForm from "@/components/admin/SocialMediaForm";
 import AboutAdmin from "@/components/admin/AboutAdmin";
 import IndexingConsole from "@/components/admin/IndexingConsole";
+import VentureStatusBadge from "@/components/VentureStatusBadge";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Website = Tables<"websites">;
@@ -38,7 +39,11 @@ const AdminDashboard = () => {
   const { data: websites = [] } = useQuery({
     queryKey: ["websites"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("websites").select("*").order("created_at");
+      const { data, error } = await supabase
+        .from("websites")
+        .select("*")
+        .order("display_priority", { ascending: false })
+        .order("created_at");
       if (error) throw error;
       return data;
     },
@@ -56,20 +61,33 @@ const AdminDashboard = () => {
   });
 
   const websiteMutation = useMutation({
-    mutationFn: async (data: { id?: string; name: string; url: string; owner_name: string; icon_url: string; category: string }) => {
-      if (data.id) {
-        await adminCrud({ action: "update", table: "websites", id: data.id, data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null, category: data.category || "" } });
+    mutationFn: async (payload: WebsiteFormData & { id?: string }) => {
+      const { id, ...rest } = payload;
+      const data = {
+        name: rest.name,
+        url: rest.url,
+        owner_name: rest.owner_name,
+        icon_url: rest.icon_url || null,
+        category: rest.category || "",
+        short_description: rest.short_description || "",
+        status: rest.status,
+        featured: rest.featured,
+        display_priority: rest.display_priority,
+        visible: rest.visible,
+      };
+      if (id) {
+        await adminCrud({ action: "update", table: "websites", id, data });
       } else {
-        await adminCrud({ action: "insert", table: "websites", data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null, category: data.category || "" } });
+        await adminCrud({ action: "insert", table: "websites", data });
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["websites"] });
       setWebsiteFormOpen(false);
       setEditingWebsite(null);
-      toast.success("Website saved!");
+      toast.success("Venture saved!");
     },
-    onError: () => toast.error("Failed to save website"),
+    onError: () => toast.error("Failed to save venture"),
   });
 
   const deleteWebsite = useMutation({
