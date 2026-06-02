@@ -5,7 +5,7 @@ import SeoHead from "@/components/SeoHead";
 import { getArticle, ARTICLES } from "@/content/articles";
 import NotFound from "./NotFound";
 
-const SITE = "https://xinirox.lovable.app";
+const SITE = "https://xinirox.co.in";
 
 const ArticleDetail = () => {
   const { slug = "" } = useParams();

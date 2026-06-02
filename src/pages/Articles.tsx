@@ -10,7 +10,7 @@ const Articles = () => {
       <SeoHead
         title="Xini Rox Articles — Bio, Network & Authority Content"
         description="Authoritative articles about Xini Rox (Aanand Maurya): biography, business network, and the story behind Xini Rox Super Hub."
-        canonical="https://xinirox.lovable.app/articles"
+        canonical="https://xinirox.co.in/articles"
       />
       <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
         <header className="text-center mb-10">

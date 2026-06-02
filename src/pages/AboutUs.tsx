@@ -40,7 +40,7 @@ const AboutUs = () => {
       <SeoHead
         title="About Xini Rox – Vision, Mission & Story"
         description="Learn about Xini Rox (Aanand Maurya), a visionary business manager and entrepreneur."
-        canonical="https://xinirox.lovable.app/about"
+        canonical="https://xinirox.co.in/about"
       />
       <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
         <div className="text-center mb-10">

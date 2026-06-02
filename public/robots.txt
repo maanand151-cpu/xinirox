@@ -14,5 +14,5 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://xinirox.lovable.app/sitemap.xml
-Sitemap: https://xinirox.lovable.app/image-sitemap.xml
+Sitemap: https://xinirox.co.in/sitemap.xml
+Sitemap: https://xinirox.co.in/image-sitemap.xml

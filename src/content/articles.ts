@@ -207,7 +207,7 @@ export const ARTICLES: Article[] = [
       },
       {
         q: "Can I work with or contact Xini Rox?",
-        a: "Yes — contact details and verified social profiles are listed on Xini Rox Super Hub at https://xinirox.lovable.app.",
+        a: "Yes — contact details and verified social profiles are listed on Xini Rox Super Hub at https://xinirox.co.in.",
       },
     ],
   },

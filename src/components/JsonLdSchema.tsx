@@ -21,7 +21,7 @@ const JsonLdSchema = ({ websites, socials }: JsonLdSchemaProps) => {
       "@type": "Person",
       "name": "Xini Rox",
       "alternateName": "Aanand Maurya",
-      "mainEntityOfPage": "https://xinirox.lovable.app",
+      "mainEntityOfPage": "https://xinirox.co.in",
       "jobTitle": "Business Manager & Entrepreneur",
       "sameAs": socialUrls,
       "knowsAbout": ["Business", "Digital Marketing", "Entrepreneurship", "Technology"],
@@ -46,10 +46,10 @@ const JsonLdSchema = ({ websites, socials }: JsonLdSchemaProps) => {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Xini Rox Super Hub",
-      "url": "https://xinirox.lovable.app",
+      "url": "https://xinirox.co.in",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://xinirox.lovable.app/network?q={search_term_string}",
+        "target": "https://xinirox.co.in/network?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     };

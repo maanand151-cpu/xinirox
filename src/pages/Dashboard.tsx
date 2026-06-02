@@ -82,7 +82,7 @@ const Dashboard = () => {
       <SeoHead
         title="Xini Rox Super Hub – Digital Identity Dashboard"
         description="Central hub for all websites, social media profiles, and ventures by Xini Rox (Aanand Maurya). Explore the full digital ecosystem."
-        canonical="https://xinirox.lovable.app"
+        canonical="https://xinirox.co.in"
       />
       <JsonLdSchema websites={websites} socials={socials} />
 

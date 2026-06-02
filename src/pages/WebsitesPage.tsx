@@ -36,7 +36,7 @@ const WebsitesPage = () => {
       <SeoHead
         title="Websites – Xini Rox Super Hub"
         description="Explore all websites and digital ventures managed by Xini Rox."
-        canonical="https://xinirox.lovable.app/websites"
+        canonical="https://xinirox.co.in/websites"
       />
       <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gradient-gold mb-2">Websites</h1>

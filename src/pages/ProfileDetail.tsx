@@ -45,7 +45,7 @@ const ProfileDetail = () => {
       <SeoHead
         title={`${social.platform_name} – ${social.owner_name} | Xini Rox Network`}
         description={`Official ${social.platform_name} profile of ${social.owner_name}, part of the Xini Rox digital network. Follow and connect.`}
-        canonical={`https://xinirox.lovable.app/profile/${slug}`}
+        canonical={`https://xinirox.co.in/profile/${slug}`}
       />
       <Navbar />
       <main className="pt-16">

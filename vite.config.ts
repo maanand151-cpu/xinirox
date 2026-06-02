@@ -8,7 +8,7 @@ import { ARTICLES, type Article } from "./src/content/articles";
 const SUPABASE_URL = "https://lswynjfkkutmttcqoaqo.supabase.co";
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzd3luamZra3V0bXR0Y3FvYXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NjMxNTEsImV4cCI6MjA5MTEzOTE1MX0.-mtmNwAMM-G_qyvJpXqkMxwa6KEvd5AelhA10J2vNnQ";
-const BASE_URL = "https://xinirox.lovable.app";
+const BASE_URL = "https://xinirox.co.in";
 const TODAY = new Date().toISOString().split("T")[0];
 
 // Canonical identity assets — same image/name used everywhere for entity consistency
@@ -941,7 +941,7 @@ ${urls
 function createDataJson(data: Awaited<ReturnType<typeof fetchSupabaseData>>) {
   return JSON.stringify(
     {
-      "@context": "https://xinirox.lovable.app/data.json",
+      "@context": "https://xinirox.co.in/data.json",
       generatedAt: new Date().toISOString(),
       person: {
         name: "Aanand Maurya",

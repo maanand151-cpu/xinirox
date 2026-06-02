@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
-  const baseUrl = "https://xinirox.lovable.app";
+  const baseUrl = "https://xinirox.co.in";
   const now = new Date().toISOString().split("T")[0];
 
   const [{ data: websites }, { data: socials }] = await Promise.all([

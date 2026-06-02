@@ -45,7 +45,7 @@ const SiteDetail = () => {
       <SeoHead
         title={`${site.name} – Xini Rox Network | Official Website`}
         description={`${site.name} is managed by ${site.owner_name} and is part of the Xini Rox digital network. Visit the official website.`}
-        canonical={`https://xinirox.lovable.app/site/${slug}`}
+        canonical={`https://xinirox.co.in/site/${slug}`}
       />
       <Navbar />
       <main className="pt-16">
