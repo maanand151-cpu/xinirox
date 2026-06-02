@@ -1,9 +1,12 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Globe, ExternalLink } from "lucide-react";
+import { Globe, ExternalLink, Lock } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import VentureStatusBadge from "@/components/VentureStatusBadge";
+import { getVentureStatus, ventureStatusMeta } from "@/lib/ventureStatus";
+import { cn } from "@/lib/utils";
 
 const WebsitesPage = () => {
   const [activeTab, setActiveTab] = useState<"all" | "categories">("all");
@@ -12,24 +15,33 @@ const WebsitesPage = () => {
   const { data: websites = [], isLoading } = useQuery({
     queryKey: ["websites"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("websites").select("*").order("created_at");
+      const { data, error } = await supabase
+        .from("websites")
+        .select("*")
+        .order("display_priority", { ascending: false })
+        .order("created_at");
       if (error) throw error;
       return data;
     },
   });
 
+  const publicWebsites = useMemo(
+    () => websites.filter((w) => w.visible !== false && !ventureStatusMeta[getVentureStatus(w.status)].hideFromShowcase),
+    [websites],
+  );
+
   const categories = useMemo(() => {
     const cats = new Set<string>();
-    websites.forEach((w) => {
+    publicWebsites.forEach((w) => {
       if (w.category && w.category.trim()) cats.add(w.category.trim());
     });
     return Array.from(cats).sort();
-  }, [websites]);
+  }, [publicWebsites]);
 
   const filteredWebsites = useMemo(() => {
-    if (activeTab === "all" || !selectedCategory) return websites;
-    return websites.filter((w) => w.category?.trim() === selectedCategory);
-  }, [websites, activeTab, selectedCategory]);
+    if (activeTab === "all" || !selectedCategory) return publicWebsites;
+    return publicWebsites.filter((w) => w.category?.trim() === selectedCategory);
+  }, [publicWebsites, activeTab, selectedCategory]);
 
   return (
     <AppShell>
@@ -101,17 +113,30 @@ const WebsitesPage = () => {
           <p className="text-muted-foreground text-center py-12">No websites found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredWebsites.map((site) => (
-              <a
-                key={site.id}
-                href={site.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block"
-              >
-                <div className="rounded-xl bg-card/80 backdrop-blur border border-border/30 p-6 flex flex-col items-center text-center gap-4 h-full hover:border-primary/30 hover:glow-gold-sm transition-all duration-300 hover:-translate-y-1">
+            {filteredWebsites.map((site) => {
+              const status = getVentureStatus(site.status);
+              const meta = ventureStatusMeta[status];
+              const disabled = meta.ctaDisabled;
+              const dimmed = status === "paused" || status === "under_development";
+
+              const Inner = (
+                <div
+                  className={cn(
+                    "rounded-xl bg-card/80 backdrop-blur border border-border/30 p-6 flex flex-col items-center text-center gap-4 h-full transition-all duration-300",
+                    dimmed && "opacity-75",
+                    !disabled && "hover:border-primary/30 hover:glow-gold-sm hover:-translate-y-1",
+                  )}
+                >
+                  <div className="w-full flex justify-between items-start">
+                    <VentureStatusBadge status={status} />
+                    {site.featured && (
+                      <span className="text-[10px] uppercase tracking-wide text-primary border border-primary/30 rounded-full px-2 py-0.5">
+                        Featured
+                      </span>
+                    )}
+                  </div>
                   {site.icon_url ? (
-                    <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border/30 group-hover:border-primary/30 transition-colors">
+                    <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border/30 transition-colors">
                       <img src={site.icon_url} alt={site.name} className="w-full h-full object-cover" loading="lazy" />
                     </div>
                   ) : (
@@ -121,20 +146,50 @@ const WebsitesPage = () => {
                   )}
                   <div>
                     <h3 className="font-semibold text-foreground">{site.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{site.owner_name}</p>
+                    {site.short_description ? (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{site.short_description}</p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground mt-1">{site.owner_name}</p>
+                    )}
                     {site.category && (
                       <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
                         {site.category}
                       </span>
                     )}
                   </div>
-                  <div className="mt-auto pt-3 flex items-center gap-1.5 text-xs text-primary/70 group-hover:text-primary transition-colors">
-                    <span>Visit</span>
-                    <ExternalLink className="w-3 h-3" />
+                  <div
+                    className={cn(
+                      "mt-auto pt-3 flex items-center gap-1.5 text-xs transition-colors",
+                      disabled ? "text-muted-foreground" : "text-primary/70 group-hover:text-primary",
+                    )}
+                  >
+                    {disabled && <Lock className="w-3 h-3" />}
+                    <span>{meta.ctaLabel}</span>
+                    {!disabled && <ExternalLink className="w-3 h-3" />}
                   </div>
                 </div>
-              </a>
-            ))}
+              );
+
+              if (disabled) {
+                return (
+                  <div key={site.id} aria-disabled className="block cursor-not-allowed" title={`${meta.label} — ${meta.description}`}>
+                    {Inner}
+                  </div>
+                );
+              }
+
+              return (
+                <a
+                  key={site.id}
+                  href={site.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  {Inner}
+                </a>
+              );
+            })}
           </div>
         )}
       </div>

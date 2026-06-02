@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, X, Globe, Share2, User } from "lucide-react";
-import WebsiteForm from "@/components/admin/WebsiteForm";
+import WebsiteForm, { type WebsiteFormData } from "@/components/admin/WebsiteForm";
 import SocialMediaForm from "@/components/admin/SocialMediaForm";
 import AboutAdmin from "@/components/admin/AboutAdmin";
 import IndexingConsole from "@/components/admin/IndexingConsole";
+import VentureStatusBadge from "@/components/VentureStatusBadge";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Website = Tables<"websites">;
@@ -38,7 +39,11 @@ const AdminDashboard = () => {
   const { data: websites = [] } = useQuery({
     queryKey: ["websites"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("websites").select("*").order("created_at");
+      const { data, error } = await supabase
+        .from("websites")
+        .select("*")
+        .order("display_priority", { ascending: false })
+        .order("created_at");
       if (error) throw error;
       return data;
     },
@@ -56,20 +61,33 @@ const AdminDashboard = () => {
   });
 
   const websiteMutation = useMutation({
-    mutationFn: async (data: { id?: string; name: string; url: string; owner_name: string; icon_url: string; category: string }) => {
-      if (data.id) {
-        await adminCrud({ action: "update", table: "websites", id: data.id, data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null, category: data.category || "" } });
+    mutationFn: async (payload: WebsiteFormData & { id?: string }) => {
+      const { id, ...rest } = payload;
+      const data = {
+        name: rest.name,
+        url: rest.url,
+        owner_name: rest.owner_name,
+        icon_url: rest.icon_url || null,
+        category: rest.category || "",
+        short_description: rest.short_description || "",
+        status: rest.status,
+        featured: rest.featured,
+        display_priority: rest.display_priority,
+        visible: rest.visible,
+      };
+      if (id) {
+        await adminCrud({ action: "update", table: "websites", id, data });
       } else {
-        await adminCrud({ action: "insert", table: "websites", data: { name: data.name, url: data.url, owner_name: data.owner_name, icon_url: data.icon_url || null, category: data.category || "" } });
+        await adminCrud({ action: "insert", table: "websites", data });
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["websites"] });
       setWebsiteFormOpen(false);
       setEditingWebsite(null);
-      toast.success("Website saved!");
+      toast.success("Venture saved!");
     },
-    onError: () => toast.error("Failed to save website"),
+    onError: () => toast.error("Failed to save venture"),
   });
 
   const deleteWebsite = useMutation({
@@ -131,36 +149,42 @@ const AdminDashboard = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-        {/* Websites */}
+        {/* Ventures */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-primary" />
-              <h2 className="text-2xl font-serif font-bold text-foreground">Websites</h2>
+              <h2 className="text-2xl font-serif font-bold text-foreground">Venture Manager</h2>
             </div>
             <Button onClick={() => { setEditingWebsite(null); setWebsiteFormOpen(true); }}>
-              <Plus className="w-4 h-4 mr-2" /> Add
+              <Plus className="w-4 h-4 mr-2" /> Add Venture
             </Button>
           </div>
           {websites.length === 0 ? (
             <Card className="bg-card border-border/30">
-              <CardContent className="p-8 text-center text-muted-foreground">No websites yet.</CardContent>
+              <CardContent className="p-8 text-center text-muted-foreground">No ventures yet.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-3">
               {websites.map((site) => (
-                <Card key={site.id} className="bg-card border-border/30">
-                  <CardContent className="p-4 flex items-center gap-4">
+                <Card key={site.id} className={`bg-card border-border/30 ${site.visible === false ? "opacity-60" : ""}`}>
+                  <CardContent className="p-4 flex items-center gap-4 flex-wrap sm:flex-nowrap">
                     {site.icon_url ? (
                       <img src={site.icon_url} alt={site.name} className="w-10 h-10 rounded-lg object-cover border border-border/30" />
                     ) : (
                       <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center"><Globe className="w-5 h-5 text-primary/60" /></div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-foreground">{site.name}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-foreground">{site.name}</p>
+                        <VentureStatusBadge status={site.status} />
+                        {site.featured && <span className="text-[10px] uppercase tracking-wide text-primary border border-primary/30 rounded-full px-2 py-0.5">Featured</span>}
+                        {site.visible === false && <span className="text-[10px] uppercase tracking-wide text-muted-foreground border border-border rounded-full px-2 py-0.5">Hidden</span>}
+                      </div>
                       <p className="text-sm text-muted-foreground truncate">{site.url}</p>
+                      {site.short_description && <p className="text-xs text-muted-foreground/80 truncate">{site.short_description}</p>}
                     </div>
-                    <p className="text-sm text-muted-foreground hidden sm:block">{site.owner_name}</p>
+                    <p className="text-xs text-muted-foreground hidden sm:block">Priority: {site.display_priority ?? 0}</p>
                     <div className="flex gap-1">
                       <Button size="icon" variant="ghost" onClick={() => { setEditingWebsite(site); setWebsiteFormOpen(true); }}><Pencil className="w-4 h-4" /></Button>
                       <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteWebsite.mutate(site.id)}><Trash2 className="w-4 h-4" /></Button>

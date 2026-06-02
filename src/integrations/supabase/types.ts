@@ -180,32 +180,47 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          display_priority: number
+          featured: boolean
           icon_url: string | null
           id: string
           name: string
           owner_name: string
+          short_description: string
+          status: string
           updated_at: string
           url: string
+          visible: boolean
         }
         Insert: {
           category?: string
           created_at?: string
+          display_priority?: number
+          featured?: boolean
           icon_url?: string | null
           id?: string
           name: string
           owner_name: string
+          short_description?: string
+          status?: string
           updated_at?: string
           url: string
+          visible?: boolean
         }
         Update: {
           category?: string
           created_at?: string
+          display_priority?: number
+          featured?: boolean
           icon_url?: string | null
           id?: string
           name?: string
           owner_name?: string
+          short_description?: string
+          status?: string
           updated_at?: string
           url?: string
+          visible?: boolean
         }
         Relationships: []
       }
