@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Articles from "./pages/Articles";
 import ArticleDetail from "./pages/ArticleDetail";
 import NotFound from "./pages/NotFound";
+import EntityPage from "./pages/EntityPage";
 import AutoSchema from "./components/AutoSchema";
 import InstallPromptModal from "./components/InstallPromptModal";
 
@@ -38,6 +39,10 @@ const App = () => (
           <Route path="/ecosystem" element={<Network />} />
           <Route path="/projects" element={<WebsitesPage />} />
           <Route path="/services" element={<AboutUs />} />
+          <Route path="/knowledge" element={<EntityPage variant="knowledge" />} />
+          <Route path="/entity" element={<EntityPage variant="entity" />} />
+          <Route path="/brand" element={<EntityPage variant="brand" />} />
+          <Route path="/founder-story" element={<EntityPage variant="founder-story" />} />
           <Route path="/about-aanand-maurya" element={<AboutAanandMaurya />} />
           <Route path="/network" element={<Network />} />
           <Route path="/site/:slug" element={<SiteDetail />} />
