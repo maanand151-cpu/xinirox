@@ -149,36 +149,42 @@ const AdminDashboard = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-        {/* Websites */}
+        {/* Ventures */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-primary" />
-              <h2 className="text-2xl font-serif font-bold text-foreground">Websites</h2>
+              <h2 className="text-2xl font-serif font-bold text-foreground">Venture Manager</h2>
             </div>
             <Button onClick={() => { setEditingWebsite(null); setWebsiteFormOpen(true); }}>
-              <Plus className="w-4 h-4 mr-2" /> Add
+              <Plus className="w-4 h-4 mr-2" /> Add Venture
             </Button>
           </div>
           {websites.length === 0 ? (
             <Card className="bg-card border-border/30">
-              <CardContent className="p-8 text-center text-muted-foreground">No websites yet.</CardContent>
+              <CardContent className="p-8 text-center text-muted-foreground">No ventures yet.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-3">
               {websites.map((site) => (
-                <Card key={site.id} className="bg-card border-border/30">
-                  <CardContent className="p-4 flex items-center gap-4">
+                <Card key={site.id} className={`bg-card border-border/30 ${site.visible === false ? "opacity-60" : ""}`}>
+                  <CardContent className="p-4 flex items-center gap-4 flex-wrap sm:flex-nowrap">
                     {site.icon_url ? (
                       <img src={site.icon_url} alt={site.name} className="w-10 h-10 rounded-lg object-cover border border-border/30" />
                     ) : (
                       <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center"><Globe className="w-5 h-5 text-primary/60" /></div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-foreground">{site.name}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-foreground">{site.name}</p>
+                        <VentureStatusBadge status={site.status} />
+                        {site.featured && <span className="text-[10px] uppercase tracking-wide text-primary border border-primary/30 rounded-full px-2 py-0.5">Featured</span>}
+                        {site.visible === false && <span className="text-[10px] uppercase tracking-wide text-muted-foreground border border-border rounded-full px-2 py-0.5">Hidden</span>}
+                      </div>
                       <p className="text-sm text-muted-foreground truncate">{site.url}</p>
+                      {site.short_description && <p className="text-xs text-muted-foreground/80 truncate">{site.short_description}</p>}
                     </div>
-                    <p className="text-sm text-muted-foreground hidden sm:block">{site.owner_name}</p>
+                    <p className="text-xs text-muted-foreground hidden sm:block">Priority: {site.display_priority ?? 0}</p>
                     <div className="flex gap-1">
                       <Button size="icon" variant="ghost" onClick={() => { setEditingWebsite(site); setWebsiteFormOpen(true); }}><Pencil className="w-4 h-4" /></Button>
                       <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteWebsite.mutate(site.id)}><Trash2 className="w-4 h-4" /></Button>
