@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { adminCrud } from "@/lib/adminCrud";
+import { pingIndexNow, ENTITY_PATHS } from "@/lib/indexnow";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -85,7 +86,8 @@ const AdminDashboard = () => {
       queryClient.invalidateQueries({ queryKey: ["websites"] });
       setWebsiteFormOpen(false);
       setEditingWebsite(null);
-      toast.success("Venture saved!");
+      pingIndexNow(ENTITY_PATHS);
+      toast.success("Venture saved & search engines pinged!");
     },
     onError: () => toast.error("Failed to save venture"),
   });
@@ -112,7 +114,8 @@ const AdminDashboard = () => {
       queryClient.invalidateQueries({ queryKey: ["social_media"] });
       setSocialFormOpen(false);
       setEditingSocial(null);
-      toast.success("Social media saved!");
+      pingIndexNow(ENTITY_PATHS);
+      toast.success("Network saved & search engines pinged!");
     },
     onError: () => toast.error("Failed to save social media"),
   });
