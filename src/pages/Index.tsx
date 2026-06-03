@@ -7,6 +7,7 @@ import SocialMediaSection from "@/components/SocialMediaSection";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 import JsonLdSchema from "@/components/JsonLdSchema";
+import SemanticBlock from "@/components/SemanticBlock";
 
 const Index = () => {
   const { data: websites = [] } = useQuery({
@@ -30,6 +31,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <JsonLdSchema websites={websites} socials={socials} />
+      <SemanticBlock
+        page="home"
+        entityType="Organization"
+        summary="Central identity hub for Xini Rox (Aanand Maurya), connecting every venture, network, and service of the Xini Rox Super Hub ecosystem."
+        relations={{
+          founder: "Aanand Maurya",
+          organization: "Xini Rox Super Hub",
+          ventures: websites.map((w: any) => w.name),
+          networks: socials.map((s: any) => s.platform_name),
+        }}
+      />
       <Navbar />
       <main className="pt-16">
         <HeroSection />
