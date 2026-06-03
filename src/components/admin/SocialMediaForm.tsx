@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import IconUpload from "./IconUpload";
+import { NETWORK_CATALOG } from "@/config/networkCatalog";
 import type { Tables } from "@/integrations/supabase/types";
 
 type SocialMedia = Tables<"social_media">;
@@ -53,7 +54,19 @@ const SocialMediaForm = ({ open, onClose, onSubmit, initial, loading }: SocialMe
           <IconUpload value={iconUrl} onChange={setIconUrl} />
           <div>
             <Label>Platform Name</Label>
-            <Input value={platformName} onChange={(e) => setPlatformName(e.target.value)} required className="bg-secondary border-border" />
+            <Input
+              value={platformName}
+              onChange={(e) => setPlatformName(e.target.value)}
+              required
+              list="network-presets"
+              placeholder="Instagram, YouTube, LinkedIn, GitHub, X, Threads…"
+              className="bg-secondary border-border"
+            />
+            <datalist id="network-presets">
+              {NETWORK_CATALOG.map((n) => (
+                <option key={n.id} value={n.label} />
+              ))}
+            </datalist>
           </div>
           <div>
             <Label>Profile URL</Label>
