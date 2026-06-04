@@ -2,6 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Globe, User, Share2 } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { getArticle, ARTICLES } from "@/content/articles";
 import NotFound from "./NotFound";
 
@@ -17,6 +19,14 @@ const ArticleDetail = () => {
   return (
     <AppShell>
       <SeoHead title={`${article.title} | Xini Rox`} description={article.description} canonical={canonical} ogType="article" />
+      <SemanticBlock
+        page={`article:${article.slug}`}
+        entityType={PAGE_MEMORY.article.entityType}
+        summary={article.description}
+        focusAreas={PAGE_MEMORY.article.focusAreas}
+        relations={buildRelations({ partOf: "Xini Rox Articles", canonicalUrl: canonical })}
+        extra={{ headline: article.title, datePublished: article.publishedAt }}
+      />
 
       <article className="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
         <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground mb-6 flex items-center gap-2">

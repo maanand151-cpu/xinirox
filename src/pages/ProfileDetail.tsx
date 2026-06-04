@@ -5,6 +5,8 @@ import { Share2, ExternalLink, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { slugify } from "@/lib/slugify";
 
 const ProfileDetail = () => {
@@ -46,6 +48,17 @@ const ProfileDetail = () => {
         title={`${social.platform_name} – ${social.owner_name} | Xini Rox Network`}
         description={`Official ${social.platform_name} profile of ${social.owner_name}, part of the Xini Rox digital network. Follow and connect.`}
         canonical={`https://xinirox.co.in/profile/${slug}`}
+      />
+      <SemanticBlock
+        page={`profile:${slug}`}
+        entityType={PAGE_MEMORY.profile.entityType}
+        summary={`${social.platform_name} profile of ${social.owner_name} — sameAs anchor for the Xini Rox identity graph.`}
+        focusAreas={PAGE_MEMORY.profile.focusAreas}
+        relations={buildRelations({
+          platform: social.platform_name,
+          owner: social.owner_name,
+          sameAs: social.profile_url,
+        })}
       />
       <Navbar />
       <main className="pt-16">

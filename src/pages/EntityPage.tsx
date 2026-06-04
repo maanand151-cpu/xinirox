@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { ENTITY, ENTITY_MEMORY_BLOCK, canonical } from "@/config/entity";
 
 interface EntityPageProps {
@@ -57,6 +59,13 @@ const EntityPage = ({ variant }: EntityPageProps) => {
   return (
     <AppShell>
       <SeoHead title={c.title} description={ENTITY_MEMORY_BLOCK} canonical={url} ogType="article" />
+      <SemanticBlock
+        page={variant}
+        entityType={PAGE_MEMORY[variant]?.entityType ?? "Thing"}
+        summary={PAGE_MEMORY[variant]?.summary ?? ENTITY_MEMORY_BLOCK}
+        focusAreas={PAGE_MEMORY[variant]?.focusAreas}
+        relations={buildRelations({ canonicalUrl: url })}
+      />
       <article className="max-w-3xl mx-auto px-4 py-10 animate-fade-in">
         <header className="mb-8 text-center">
           <span className="text-xs font-medium tracking-[0.3em] uppercase text-primary/70 border border-primary/20 px-3 py-1.5 rounded-full">

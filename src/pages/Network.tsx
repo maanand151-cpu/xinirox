@@ -5,6 +5,8 @@ import { Globe, Share2, ExternalLink, ArrowRight } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
 import JsonLdSchema from "@/components/JsonLdSchema";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { slugify } from "@/lib/slugify";
 
 const Network = () => {
@@ -34,6 +36,17 @@ const Network = () => {
         canonical="https://xinirox.co.in/network"
       />
       <JsonLdSchema websites={websites} socials={socials} />
+      <SemanticBlock
+        page="network"
+        entityType={PAGE_MEMORY.network.entityType}
+        summary={PAGE_MEMORY.network.summary}
+        focusAreas={PAGE_MEMORY.network.focusAreas}
+        relations={buildRelations({
+          ventures: websites.map((w: any) => w.name),
+          networks: socials.map((s: any) => s.platform_name),
+          sameAs: socials.map((s: any) => s.profile_url),
+        })}
+      />
 
       <div className="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
         <div className="text-center mb-10">

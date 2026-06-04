@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ARTICLES } from "@/content/articles";
@@ -35,6 +37,17 @@ const AboutAanandMaurya = () => {
         title={`${CANONICAL} — Official Verified Identity & Founder Profile`}
         description={`${CANONICAL} — verified founder of Xini Rox Super Hub. Instagram blue-tick verified, MSME Udyam registered (${UDYAM_ID}). Canonical source-of-truth identity page.`}
         canonical="https://xinirox.co.in/about-aanand-maurya"
+      />
+      <SemanticBlock
+        page="founder"
+        entityType={PAGE_MEMORY.founder.entityType}
+        summary={PAGE_MEMORY.founder.summary}
+        focusAreas={PAGE_MEMORY.founder.focusAreas}
+        relations={buildRelations({
+          sameAs: [INSTAGRAM, ...socials.map((s: any) => s.profile_url)],
+          ventures: websites.map((w: any) => w.name),
+        })}
+        extra={{ udyamId: UDYAM_ID, verified: true }}
       />
 
       <article className="max-w-4xl mx-auto px-4 py-10 animate-fade-in">

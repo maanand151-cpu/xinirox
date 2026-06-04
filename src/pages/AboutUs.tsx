@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import AboutProfile from "@/components/about/AboutProfile";
 import AboutDetails from "@/components/about/AboutDetails";
 import AboutAchievements from "@/components/about/AboutAchievements";
@@ -41,6 +43,16 @@ const AboutUs = () => {
         title="About Xini Rox – Vision, Mission & Story"
         description="Learn about Xini Rox (Aanand Maurya), a visionary business manager and entrepreneur."
         canonical="https://xinirox.co.in/about"
+      />
+      <SemanticBlock
+        page="about"
+        entityType={PAGE_MEMORY.about.entityType}
+        summary={PAGE_MEMORY.about.summary}
+        focusAreas={PAGE_MEMORY.about.focusAreas}
+        relations={buildRelations({
+          about: "Xini Rox (Aanand Maurya)",
+          describes: "Xini Rox Super Hub",
+        })}
       />
       <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
         <div className="text-center mb-10">

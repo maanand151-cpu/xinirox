@@ -11,6 +11,8 @@ import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import AppShell from "@/components/AppShell";
 import JsonLdSchema from "@/components/JsonLdSchema";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -85,6 +87,15 @@ const Dashboard = () => {
         canonical="https://xinirox.co.in"
       />
       <JsonLdSchema websites={websites} socials={socials} />
+      <SemanticBlock
+        page="dashboard"
+        entityType={PAGE_MEMORY.dashboard.entityType}
+        summary={PAGE_MEMORY.dashboard.summary}
+        relations={buildRelations({
+          ventures: websites.map((w: any) => w.name),
+          networks: socials.map((s: any) => s.platform_name),
+        })}
+      />
 
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 animate-fade-in">
         {/* Welcome Header */}

@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Share2, ExternalLink } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 
 const SocialPage = () => {
   const { data: socials = [], isLoading } = useQuery({
@@ -20,6 +22,16 @@ const SocialPage = () => {
         title="Social Media – Xini Rox Super Hub"
         description="All social media profiles and platforms connected to Xini Rox."
         canonical="https://xinirox.co.in/social"
+      />
+      <SemanticBlock
+        page="social"
+        entityType={PAGE_MEMORY.social.entityType}
+        summary={PAGE_MEMORY.social.summary}
+        focusAreas={PAGE_MEMORY.social.focusAreas}
+        relations={buildRelations({
+          sameAs: socials.map((s: any) => s.profile_url),
+          platforms: socials.map((s: any) => s.platform_name),
+        })}
       />
       <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gradient-gold mb-2">Social Media</h1>
