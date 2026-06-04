@@ -11,6 +11,8 @@ import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import AppShell from "@/components/AppShell";
 import JsonLdSchema from "@/components/JsonLdSchema";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 
 const Dashboard = () => {
   const navigate = useNavigate();
