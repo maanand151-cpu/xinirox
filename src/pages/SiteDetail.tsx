@@ -5,6 +5,8 @@ import { Globe, ExternalLink, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { slugify } from "@/lib/slugify";
 
 const SiteDetail = () => {
@@ -46,6 +48,20 @@ const SiteDetail = () => {
         title={`${site.name} – Xini Rox Network | Official Website`}
         description={`${site.name} is managed by ${site.owner_name} and is part of the Xini Rox digital network. Visit the official website.`}
         canonical={`https://xinirox.co.in/site/${slug}`}
+      />
+      <SemanticBlock
+        page={`site:${slug}`}
+        entityType={PAGE_MEMORY.site.entityType}
+        summary={`${site.name} — venture in the Xini Rox Super Hub ecosystem, owned by ${site.owner_name}.`}
+        focusAreas={PAGE_MEMORY.site.focusAreas}
+        relations={buildRelations({
+          venture: site.name,
+          owner: site.owner_name,
+          status: (site as any).status ?? "active",
+          category: (site as any).category ?? "",
+          url: site.url,
+          parentOrganization: "Xini Rox Super Hub",
+        })}
       />
       <Navbar />
       <main className="pt-16">

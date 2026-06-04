@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Globe, ExternalLink, Lock } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import VentureStatusBadge from "@/components/VentureStatusBadge";
 import { getVentureStatus, ventureStatusMeta } from "@/lib/ventureStatus";
 import { cn } from "@/lib/utils";
@@ -49,6 +51,20 @@ const WebsitesPage = () => {
         title="Websites – Xini Rox Super Hub"
         description="Explore all websites and digital ventures managed by Xini Rox."
         canonical="https://xinirox.co.in/websites"
+      />
+      <SemanticBlock
+        page="websites"
+        entityType={PAGE_MEMORY.websites.entityType}
+        summary={PAGE_MEMORY.websites.summary}
+        focusAreas={PAGE_MEMORY.websites.focusAreas}
+        relations={buildRelations({
+          ventures: publicWebsites.map((w: any) => w.name),
+          categories: Array.from(new Set(publicWebsites.map((w: any) => w.category).filter(Boolean))),
+        })}
+        extra={{
+          itemListOrder: "priority",
+          totalItems: publicWebsites.length,
+        }}
       />
       <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gradient-gold mb-2">Websites</h1>

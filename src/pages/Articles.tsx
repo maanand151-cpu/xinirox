@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { BookOpen, ArrowRight } from "lucide-react";
 import AppShell from "@/components/AppShell";
 import SeoHead from "@/components/SeoHead";
+import SemanticBlock from "@/components/SemanticBlock";
+import { PAGE_MEMORY, buildRelations } from "@/config/semanticMemory";
 import { ARTICLES } from "@/content/articles";
 
 const Articles = () => {
@@ -11,6 +13,15 @@ const Articles = () => {
         title="Xini Rox Articles — Bio, Network & Authority Content"
         description="Authoritative articles about Xini Rox (Aanand Maurya): biography, business network, and the story behind Xini Rox Super Hub."
         canonical="https://xinirox.co.in/articles"
+      />
+      <SemanticBlock
+        page="articles"
+        entityType={PAGE_MEMORY.articles.entityType}
+        summary={PAGE_MEMORY.articles.summary}
+        focusAreas={PAGE_MEMORY.articles.focusAreas}
+        relations={buildRelations({
+          articles: ARTICLES.map((a) => a.title),
+        })}
       />
       <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
         <header className="text-center mb-10">
